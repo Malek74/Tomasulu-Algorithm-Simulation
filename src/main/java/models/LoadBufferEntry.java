@@ -50,8 +50,7 @@ public class LoadBufferEntry {
         return "[Busy=" + busy + ", Address=" + (address == -1 ? "None" : address) + "]";
     }
 
-    public int writeBackEntry() {
-        return mainController.memory.load(address);
-
+    public float writeBackEntry() {
+        return mainController.memory.getWordFloat(address);
     }
 }

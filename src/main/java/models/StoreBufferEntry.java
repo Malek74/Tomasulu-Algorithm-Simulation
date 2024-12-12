@@ -6,7 +6,7 @@ public class StoreBufferEntry {
     private boolean busy; // Whether this buffer entry is in use
     private int address; // Memory address for the store operation
     private String tag;
-    private double v; // Value to store (if ready)
+    private float v; // Value to store (if ready)
     private String q; // Tag of the producing reservation station or functional unit (if not ready)
     int timeLeft;
 
@@ -14,7 +14,7 @@ public class StoreBufferEntry {
     public StoreBufferEntry() {
         this.busy = false;
         this.address = 0;
-        this.v = Double.NaN; // NaN indicates value is not ready
+        this.v = Float.NaN; // NaN indicates value is not ready
         this.q = null; // Null indicates no dependency
     }
 
@@ -35,11 +35,11 @@ public class StoreBufferEntry {
         this.address = address;
     }
 
-    public double getV() {
+    public float getV() {
         return v;
     }
 
-    public void setV(double v) {
+    public void setV(float v) {
         this.v = v;
         this.q = null; // If value is set, no dependency exists
     }
@@ -50,7 +50,7 @@ public class StoreBufferEntry {
 
     public void setQ(String q) {
         this.q = q;
-        this.v = Double.NaN; // If dependency exists, value is not ready
+        this.v = Float.NaN; // If dependency exists, value is not ready
     }
 
     public void setTag(String tag) {
@@ -69,7 +69,7 @@ public class StoreBufferEntry {
         this.q = null;
     }
 
-    public void updateStoreBuffer(String tagName, double value) {
+    public void updateStoreBuffer(String tagName, float value) {
         if (q.equals(tagName)) {
             v = value; // Update the value if the tag matches
             q = ""; // Clear the dependency tag
@@ -86,7 +86,7 @@ public class StoreBufferEntry {
     }
 
     public void writeToMemory() {
-       mainController.memory.store(address, v);
+       mainController.memory.writeWordToMemory(address, v);
         this.clear();
     }
 

@@ -2,6 +2,7 @@ package models;
 
 import models.MemoryBlock;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,5 +39,31 @@ public class MainMemory {
         for (int i = 0; i < values.length; i++) {
             writeByte(startAddress + i, values[i]);
         }
+    }
+
+    public byte[] readFromMemory(int address, int numBytes) {
+        byte[] result = new byte[numBytes];
+        for (int i = 0; i < numBytes; i++) {
+            result[i] = readByte(address + i); // Use the existing readByte method
+        }
+        return result;
+    }
+
+    public float translateWordToFloat(int address) {
+        // Ensure we're reading exactly 4 bytes (size of a float)
+        byte[] wordBytes = readFromMemory(address, 4); // Fetch the 4 bytes
+        return ByteBuffer.wrap(wordBytes).getFloat(); // Convert to float
+    }
+
+    public float getWordFloat(int address) {
+        return translateWordToFloat(address);
+    }
+
+    public void writeWordToMemory(int address, float value) {
+        // Convert the float value to 4 bytes
+        byte[] wordBytes = ByteBuffer.allocate(4).putFloat(value).array();
+
+        // Write the bytes to memory, starting at the specified address
+        writeBytes(address, wordBytes);
     }
 }
