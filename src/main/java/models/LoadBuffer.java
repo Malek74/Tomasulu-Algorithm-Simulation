@@ -1,11 +1,11 @@
 package models;
 
+import controllers.mainController;
 
 import java.util.ArrayList;
 
-
 public class LoadBuffer {
-	private ArrayList<LoadBufferEntry> buffer; // ArrayList of LoadBufferEntry
+    private ArrayList<LoadBufferEntry> buffer; // ArrayList of LoadBufferEntry
 
     // Constructor: Initialize buffer with the given size
     public LoadBuffer(int size) {
@@ -55,15 +55,14 @@ public class LoadBuffer {
         }
     }
 
-    public void writeBackLoad(IntegerReservationStation integerReservationStation,FloatReservationStation floatReservationStation) {
+    public void writeBackLoad(String tag) {
+        // todo:add loading memory
         for (LoadBufferEntry loadBufferEntry : buffer) {
             int value = loadBufferEntry.writeBackEntry();
-            integerReservationStation.updateReservationStation(loadBufferEntry.getTag(), value);
-            floatReservationStation.updateReservationStation(loadBufferEntry.getTag(), value);
-
+            mainController.floatReservationStationBuffer.updateReservationStationBuffer(tag, value);
+            mainController.integerReservationStationBuffer.updateReservationStationBuffer(tag, value);
         }
     }
-
 
     public static void main(String[] args) {
         // 1. Create a LoadBuffer with 3 entries
@@ -90,7 +89,7 @@ public class LoadBuffer {
         System.out.println("Test Case 4: Modify the second entry directly");
         LoadBufferEntry entry = loadBuffer.getEntry(1); // Get the second entry
         entry.setAddress(500); // Update the address to 500
-        entry.setBusy(false);  // Mark it as not busy
+        entry.setBusy(false); // Mark it as not busy
         loadBuffer.printBuffer();
         System.out.println();
 

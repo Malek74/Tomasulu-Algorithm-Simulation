@@ -240,7 +240,7 @@ public class FloatReservationStationBuffer {
 
     }
 
-    private void updateReservationStationBuffer(String tag, float value) {
+    public void updateReservationStationBuffer(String tag, float value) {
 
         // update all reservation stations that depend on this tag
         for (int i = 0; i < floatMultRS.length; i++) {

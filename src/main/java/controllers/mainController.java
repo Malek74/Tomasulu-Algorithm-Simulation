@@ -152,11 +152,11 @@ public class mainController {
 
         // check if the store buffer is ready to write back
         if (tagToWriteBack.contains("S")) {
-            // todo:call the store buffer function
+            storeBuffer.writeEntry(tagToWriteBack);
         }
 
         if (tagToWriteBack.contains("L")) {
-            // todo:call the load buffer function
+            loadBuffer.writeBackLoad();
         }
 
         // remove the tag from the write back array
