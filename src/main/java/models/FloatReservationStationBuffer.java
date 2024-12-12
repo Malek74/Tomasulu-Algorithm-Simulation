@@ -222,18 +222,22 @@ public class FloatReservationStationBuffer {
         if (tagName.contains("MF")) {
             value = (float) (floatMultRS[index].getVJ() * floatMultRS[index].getVK());
 
-
             floatMultRS[index].clearReservationStation();
         } else if (tagName.contains("AF")) {
-            value = (float) (floatMultRS[index].getVJ() * floatMultRS[index].getVK());
+            value = (float) (floatMultRS[index].getVJ() + floatMultRS[index].getVK());
             floatAddRS[index].clearReservationStation();
         }
 
-        updateReservationStation(tagName, value);
+        // update reservation stations due to write back
+        updateReservationStationBuffer(tagName, value);
+
+        // todo:update register file due to write back
+
+        //
 
     }
 
-    private void updateReservationStation(String tag, float value) {
+    private void updateReservationStationBuffer(String tag, float value) {
 
         // update all reservation stations that depend on this tag
         for (int i = 0; i < floatMultRS.length; i++) {
@@ -242,12 +246,6 @@ public class FloatReservationStationBuffer {
         for (int i = 0; i < floatAddRS.length; i++) {
             floatAddRS[i].updateReservationStation(tag, value);
         }
-
-        // update the register file
-        // todo:call the register file update function
-
-        // update the store buffer
-        // todo:call the store buffer update function
     }
 
     public void printRS() {
