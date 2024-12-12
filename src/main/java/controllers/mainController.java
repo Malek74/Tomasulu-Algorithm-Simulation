@@ -22,7 +22,8 @@ public class mainController {
     public static ArrayList<String> needsToWriteBack = new ArrayList();
     public static FloatReservationStationBuffer floatReservationStationBuffer;
     public static IntegerReservationStationBuffer integerReservationStationBuffer;
-    public static Memory memory;
+    public static MainMemory memory;
+    public static Cache cache;
     public static ArrayList<ReservationStation> reservationStationsWriteBack;
     public static ArrayList<StoreBufferEntry> storeBufferEntryWriteBack;
     public static ArrayList<LoadBufferEntry> loadBufferEntryWriteBack;
@@ -69,6 +70,8 @@ public class mainController {
         instructionQueue.loadInstructionsFromFile("src\\main\\resources\\instructions.txt");
 
         // todo:initialise memory cache
+        memory = new MainMemory(16);
+        cache = new Cache(10);
 
     }
 
