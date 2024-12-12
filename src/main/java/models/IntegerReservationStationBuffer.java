@@ -1,5 +1,7 @@
 package models;
 
+import controllers.mainController;
+
 public class IntegerReservationStationBuffer {
     static IntegerReservationStation[] intMultRS;
     static IntegerReservationStation[] intAddRS;

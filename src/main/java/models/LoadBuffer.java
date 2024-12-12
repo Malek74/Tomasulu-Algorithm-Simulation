@@ -3,6 +3,7 @@ package models;
 
 import java.util.ArrayList;
 
+
 public class LoadBuffer {
 	private ArrayList<LoadBufferEntry> buffer; // ArrayList of LoadBufferEntry
 
@@ -51,6 +52,15 @@ public class LoadBuffer {
     public void printBuffer() {
         for (int i = 0; i < buffer.size(); i++) {
             System.out.println("L" + (i + 1) + ": " + buffer.get(i));
+        }
+    }
+
+    public void writeBackLoad(IntegerReservationStation integerReservationStation,FloatReservationStation floatReservationStation) {
+        for (LoadBufferEntry loadBufferEntry : buffer) {
+            int value = loadBufferEntry.writeBackEntry();
+            integerReservationStation.updateReservationStation(loadBufferEntry.getTag(), value);
+            floatReservationStation.updateReservationStation(loadBufferEntry.getTag(), value);
+
         }
     }
 

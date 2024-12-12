@@ -1,4 +1,5 @@
 package models;
+import controllers.mainController
 
 public class LoadBufferEntry {
 
@@ -47,5 +48,10 @@ public class LoadBufferEntry {
     @Override
     public String toString() {
         return "[Busy=" + busy + ", Address=" + (address == -1 ? "None" : address) + "]";
+    }
+
+    public int writeBackEntry() {
+        return mainController.memory.load(address);
+
     }
 }
