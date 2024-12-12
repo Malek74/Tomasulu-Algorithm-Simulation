@@ -1,5 +1,7 @@
 package models;
 
+import controllers.mainController;
+
 public class StoreBufferEntry {
     private boolean busy; // Whether this buffer entry is in use
     private int address; // Memory address for the store operation
@@ -75,4 +77,11 @@ public class StoreBufferEntry {
                 ", V: " + (Double.isNaN(v) ? "Not Ready" : v) +
                 ", Q: " + (q == null ? "None" : q);
     }
+
+    public void writeToMemory() {
+       mainController.memory.store(address, v);
+        this.clear();
+    }
+
+
 }

@@ -148,8 +148,13 @@ public class StoreBuffer {
         }
     }
 
-    public void writeToMemory(Memory memory) {
-        memory.store(address, v);
-        this.clear();
+    public void writeEntry(String TagName){
+        for (StoreBufferEntry storeBufferEntry : buffer) {
+            if (storeBufferEntry.getTag().equals(TagName)) {
+                storeBufferEntry.writeToMemory();
+                return;
+            }
+        }
+        return;
     }
 }
