@@ -222,7 +222,6 @@ public class FloatReservationStationBuffer {
         if (tagName.contains("MF")) {
             value = (float) (floatMultRS[index].getVJ() * floatMultRS[index].getVK());
 
-            mainController.registerFloat.updateRegisterDuetoWriteBack(tagName, value);
 
             floatMultRS[index].clearReservationStation();
         } else if (tagName.contains("AF")) {

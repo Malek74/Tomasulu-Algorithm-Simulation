@@ -20,11 +20,13 @@ public class IntegerReservationStationBuffer {
     }
 
     public void writeBack(String tag) {
+        
         int index = ((int) tag.charAt(2)) - 1;
         int value = 0;
 
         if (tag.contains("MR")) {
             value = intMultRS[index].getVJ() * intMultRS[index].getVK();
+            mainController.int
         } else if (tag.contains("AR")) {
             value = intAddRS[index].getVJ() + intAddRS[index].getVK();
         }
