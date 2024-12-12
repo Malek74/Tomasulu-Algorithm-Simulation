@@ -1,5 +1,6 @@
 package models;
 
+import controllers.mainController;
 import models.FloatReservationStation;
 import models.Instruction;
 import models.operation;
@@ -14,12 +15,12 @@ public class FloatReservationStationBuffer {
 
         for (int i = 0; i < multSize; i++) {
             floatMultRS[i] = new FloatReservationStation();
-            floatMultRS[i].setTagName("M" + i);
+            floatMultRS[i].setTagName("MF" + i);
         }
 
         for (int i = 0; i < addSize; i++) {
             floatAddRS[i] = new FloatReservationStation();
-            floatAddRS[i].setTagName("A" + i);
+            floatAddRS[i].setTagName("AF" + i);
         }
     }
 
@@ -198,20 +199,58 @@ public class FloatReservationStationBuffer {
     }
 
     public int getNumOfDependencies(String tag) {
-        int count=0;
-        for (int i=0;i<floatAddRS.length;i++){
-            if(floatAddRS[i].qJ.equals(tag) || floatAddRS[i].qK.equals(tag)){
+        int count = 0;
+        for (int i = 0; i < floatAddRS.length; i++) {
+            if (floatAddRS[i].qJ.equals(tag) || floatAddRS[i].qK.equals(tag)) {
                 count++;
             }
         }
 
-        for (int i=0;i<floatMultRS.length;i++){
-            if(floatAddRS[i].qJ.equals(tag) || floatAddRS[i].qK.equals(tag)){
+        for (int i = 0; i < floatMultRS.length; i++) {
+            if (floatAddRS[i].qJ.equals(tag) || floatAddRS[i].qK.equals(tag)) {
                 count++;
             }
         }
         return count;
     }
+
+    public void writeBack(String tagName) {
+        int index = ((int) tagName.charAt(2)) - 1;
+
+        float value = 0;
+
+        if (tagName.contains("MF")) {
+            value = (float) (floatMultRS[index].getVJ() * floatMultRS[index].getVK());
+
+            mainController.registerFloat.updateRegisterDuetoWriteBack(tagName, value);
+
+            floatMultRS[index].clearReservationStation();
+        } else if (tagName.contains("AF")) {
+            value = (float) (floatMultRS[index].getVJ() * floatMultRS[index].getVK());
+            floatAddRS[index].clearReservationStation();
+        }
+
+        updateReservationStation(tagName, value);
+
+    }
+
+    private void updateReservationStation(String tag, float value) {
+
+        // update all reservation stations that depend on this tag
+        for (int i = 0; i < floatMultRS.length; i++) {
+            floatMultRS[i].updateReservationStation(tag, value);
+        }
+        for (int i = 0; i < floatAddRS.length; i++) {
+            floatAddRS[i].updateReservationStation(tag, value);
+        }
+
+        // update the register file
+        // todo:call the register file update function
+
+        // update the store buffer
+        // todo:call the store buffer update function
+    }
+
     public void printRS() {
         System.out.println("Printing the float Multiplication reservation station buffer\n");
         for (int i = 0; i < floatMultRS.length; i++) {
@@ -223,6 +262,5 @@ public class FloatReservationStationBuffer {
             System.out.println(floatAddRS[i].toString());
         }
     }
-
 
 }

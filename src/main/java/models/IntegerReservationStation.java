@@ -27,7 +27,16 @@ public class IntegerReservationStation extends ReservationStation {
         return vK;
     }
 
-
+    public void updateReservationStation(String tagName, int value) {
+        if (qJ.equals(tagName)) {
+            vJ = value;
+            qJ = "";
+        }
+        if (qK.equals(tagName)) {
+            vK = value;
+            qK = "";
+        }
+    }
 
     public void clearReservationStation() {
         super.clearReservationStation();

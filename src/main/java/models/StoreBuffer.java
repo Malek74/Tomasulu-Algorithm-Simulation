@@ -1,6 +1,5 @@
 package models;
 
-
 import java.util.ArrayList;
 
 public class StoreBuffer {
@@ -70,7 +69,6 @@ public class StoreBuffer {
             StoreBufferEntry entry = buffer.get(i);
             if (!entry.isBusy()) {
 
-
                 // Handle the source register
                 Register sourceRegister = registerFile.getRegister(sourceRegisterName);
                 double valueToStore;
@@ -95,18 +93,19 @@ public class StoreBuffer {
         return false; // No available store buffer entry
     }
 
-    public int getNumOfDependencies(String tag){
-        StoreBufferEntry entry=new StoreBufferEntry();
-        int count=0;
+    public int getNumOfDependencies(String tag) {
+        StoreBufferEntry entry = new StoreBufferEntry();
+        int count = 0;
 
-        for(int i=0;i<buffer.size();i++){
-            entry=buffer.get(i);
-            if(entry.getQ().equals(tag)){
+        for (int i = 0; i < buffer.size(); i++) {
+            entry = buffer.get(i);
+            if (entry.getQ().equals(tag)) {
                 count++;
             }
         }
         return count;
     }
+
     public static void main(String[] args) {
         // 1. Create a StoreBuffer with 3 entries
         System.out.println("Test Case 1: Create a StoreBuffer with 3 entries");
@@ -148,5 +147,9 @@ public class StoreBuffer {
             System.out.println("Caught Exception: " + e.getMessage());
         }
     }
-}
 
+    public void writeToMemory(Memory memory) {
+        memory.store(address, v);
+        this.clear();
+    }
+}

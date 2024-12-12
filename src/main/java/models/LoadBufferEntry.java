@@ -5,6 +5,7 @@ public class LoadBufferEntry {
     private boolean busy; // Indicates if the entry is occupied
     private int address;// Holds the effective address
     private String tag;
+    int timeLeft;
 
     // Constructor
     public LoadBufferEntry() {

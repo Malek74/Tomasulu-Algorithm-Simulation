@@ -1,18 +1,19 @@
 package models;
 
 public class StoreBufferEntry {
-    private boolean busy;    // Whether this buffer entry is in use
-    private int address;     // Memory address for the store operation
+    private boolean busy; // Whether this buffer entry is in use
+    private int address; // Memory address for the store operation
     private String tag;
-    private double v;        // Value to store (if ready)
-    private String q;        // Tag of the producing reservation station or functional unit (if not ready)
+    private double v; // Value to store (if ready)
+    private String q; // Tag of the producing reservation station or functional unit (if not ready)
+    int timeLeft;
 
     // Constructor: Initialize entry as empty
     public StoreBufferEntry() {
         this.busy = false;
         this.address = 0;
         this.v = Double.NaN; // NaN indicates value is not ready
-        this.q = null;       // Null indicates no dependency
+        this.q = null; // Null indicates no dependency
     }
 
     // Getters and Setters

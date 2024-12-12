@@ -1,14 +1,15 @@
 package models;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 public class RegisterFile {
-	private Map<String, Register> registers;
+	private Hashtable<String, Register> registers;
 
 	// todo:needs to start from zero
 	public RegisterFile(String prefix, int count) {
-		registers = new HashMap<>();
+		registers = new Hashtable<>();
 		for (int i = 0; i <= count; i++) {
 			registers.put(prefix + i, new Register(prefix + i));
 			registers.get(prefix + i).setValue(0);
@@ -55,5 +56,15 @@ public class RegisterFile {
 		for (Register register : registers.values()) {
 			System.out.println(register);
 		}
+	}
+
+	public int countDependencies(String Key, String tag) {
+		int count = 0;
+		for (int i = 0; i < registers.size(); i++) {
+			if (tag.equals(registers.get(Key + i).getQi())) {
+				count++;
+			}
+		}
+		return count;
 	}
 }

@@ -12,20 +12,20 @@ import java.util.*;
 
 public class mainController {
 
-    private Map<String, Integer> latencyMap = new HashMap<>();
-    static LoadBuffer loadBuffer;
-    static StoreBuffer storeBuffer;
-    static RegisterFile registerFloat;
-    static RegisterFile registerInt;
-    static InstructionQueue instructionQueue;
-    static int clock = 0;
-    static Hashtable needsToWriteBack = new Hashtable();
-    static FloatReservationStationBuffer floatReservationStationBuffer;
-    static IntegerReservationStationBuffer integerReservationStationBuffer;
-    static Memory memory;
-    static ArrayList<ReservationStation> reservationStationsWriteBack;
-    static ArrayList<StoreBufferEntry> storeBufferEntryWriteBack;
-    static ArrayList<LoadBufferEntry> loadBufferEntryWriteBack;
+    private Hashtable<String, Integer> latencyMap = new Hashtable<>();
+    public static LoadBuffer loadBuffer;
+    public static StoreBuffer storeBuffer;
+    public static RegisterFile registerFloat;
+    public static RegisterFile registerInt;
+    public static InstructionQueue instructionQueue;
+    public static int clock = 0;
+    public static ArrayList<String> needsToWriteBack = new ArrayList();
+    public static FloatReservationStationBuffer floatReservationStationBuffer;
+    public static IntegerReservationStationBuffer integerReservationStationBuffer;
+    public static Memory memory;
+    public static ArrayList<ReservationStation> reservationStationsWriteBack;
+    public static ArrayList<StoreBufferEntry> storeBufferEntryWriteBack;
+    public static ArrayList<LoadBufferEntry> loadBufferEntryWriteBack;
 
     public static void main(String[] args) {
 
@@ -33,15 +33,15 @@ public class mainController {
         initialiseObjects();
         // todo: load latencies
         Instruction currentInstruction;
-        while(true){
-            currentInstruction=instructionQueue.fetchInstruction();
+        while (true) {
+            currentInstruction = instructionQueue.fetchInstruction();
 
-            //check if the instruction can be issued
-            if(issueInstruction(currentInstruction,currentInstruction.extractOperation())){
-                instructionQueue.setIndex(instructionQueue.getIndex()+1);
+            // check if the instruction can be issued
+            if (issueInstruction(currentInstruction, currentInstruction.extractOperation())) {
+                instructionQueue.setIndex(instructionQueue.getIndex() + 1);
             }
 
-            //execute any instruction that is ready to execute
+            // execute any instruction that is ready to execute
             floatReservationStationBuffer.executeInstruction();
             integerReservationStationBuffer.executeInstruction();
         }
@@ -90,7 +90,6 @@ public class mainController {
         }
     }
 
-
     public static boolean issueInstruction(Instruction instruction, String op) {
 
         // handle issue of float reservation buffers
@@ -112,44 +111,86 @@ public class mainController {
         return false;
     }
 
-    public static void writeBackInstructions() {
-        //loop on reservation station to get one with highest number of dependencies
+    // decides which tag to write back in current cycle
+    public static String writeBackDecision() {
+        String tagName;
+        int numOFDependencies = -1;
+        int comp = 0;
+        String tagToWriteBack = "None";
 
+        // loop on writeback array to get one with the highest number of dependencies
+        for (int i = 0; i < needsToWriteBack.size(); i++) {
+            tagName = needsToWriteBack.get(i);
+            comp = getNumberOfDependencies(tagName);
+
+            // update tag to be written back if needed
+            if (comp > numOFDependencies) {
+                numOFDependencies = comp;
+                tagToWriteBack = tagName;
+            }
+
+        }
+        return tagToWriteBack;
     }
+
+    public static void writeBack() {
+        String tagToWriteBack = writeBackDecision();
+        if (tagToWriteBack.equals("None")) {
+            return;
+        }
+
+        // check if the float reservation station is ready to write back
+        if (tagToWriteBack.contains("MF") || tagToWriteBack.contains("AF")) {
+            floatReservationStationBuffer.writeBack(tagToWriteBack);
+        }
+
+        // check if the integer reservation station is ready to write back
+        if (tagToWriteBack.contains("MR") || tagToWriteBack.contains("AR")) {
+            // todo:call the integer RS function
+            integerReservationStationBuffer.writeBack(tagToWriteBack);
+        }
+
+        // check if the store buffer is ready to write back
+        if (tagToWriteBack.contains("S")) {
+            // todo:call the store buffer function
+        }
+
+        if (tagToWriteBack.contains("L")) {
+            // todo:call the load buffer function
+        }
+
+        // remove the tag from the write back array
+        needsToWriteBack.remove(tagToWriteBack);
+    }
+
     public void promptForLatencies(Scanner scanner) {
 
     }
 
-    public int getNumberOfDependencies(ReservationStation station) {
-        int count=0;
+    public static int getNumberOfDependencies(String tagName) {
+        int count = 0;
 
-        //loop float registers to get number of dependencies
-        for(int i=0;i<31;i++){
-            Register register=registerFloat.getRegister("R"+i);
+        // get dependencies from registers
+        count += registerFloat.countDependencies("F", tagName);
+        count += registerInt.countDependencies("R", tagName);
 
-            if(register.getQi().equals(station.tagName)){
-                count++;
-            }
+        // get dependencies from reservation stations
+        count += floatReservationStationBuffer.getNumOfDependencies(tagName)
+                + integerReservationStationBuffer.getNumOfDependencies(tagName);
+
+        // get dependencies from store buffer
+        count += storeBuffer.getNumOfDependencies(tagName);
+
+        if (tagName.contains("S")) {
+            count++;
         }
 
-        //loop integer registers to get number of dependencies
-        for(int i=0;i<31;i++){
-            Register register=registerInt.getRegister("F"+i);
-
-            if(register.getQi().equals(station.tagName)){
-                count++;
-            }
-        }
-
-        //loop float reservation stations to get number of dependencies
-        count+=floatReservationStationBuffer.getNumOfDependencies(station.getTagName())+integerReservationStationBuffer.getNumOfDependencies(station.getTagName());
-
-        count+= storeBuffer.getNumOfDependencies(station.getTagName());
         return count;
 
     }
-    static public void loadLatencies(){
-        //todo:load latencies
+
+    static public void loadLatencies() {
+        // todo:load latencies
     }
 
 }

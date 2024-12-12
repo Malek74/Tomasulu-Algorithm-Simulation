@@ -10,17 +10,43 @@ public class IntegerReservationStationBuffer {
 
         for (int i = 0; i < multSize; i++) {
             intMultRS[i] = new IntegerReservationStation();
-            intMultRS[i].setTagName("M" + i);
+            intMultRS[i].setTagName("MR" + i);
         }
 
         for (int i = 0; i < addSize; i++) {
             intAddRS[i] = new IntegerReservationStation();
-            intAddRS[i].setTagName("A" + i);
+            intAddRS[i].setTagName("AR" + i);
         }
     }
 
-    public void issueInstruction(Instruction instruction) {
+    public void writeBack(String tag) {
+        int index = ((int) tag.charAt(2)) - 1;
+        int value = 0;
 
+        if (tag.contains("MR")) {
+            value = intMultRS[index].getVJ() * intMultRS[index].getVK();
+        } else if (tag.contains("AR")) {
+            value = intAddRS[index].getVJ() + intAddRS[index].getVK();
+        }
+
+        updateReservationStation(tag, value);
+
+    }
+
+    private void updateReservationStation(String tag, int value) {
+        for (int i = 0; i < intAddRS.length; i++) {
+            intAddRS[i].updateReservationStation(tag, value);
+        }
+
+        for (int i = 0; i < intMultRS.length; i++) {
+            intMultRS[i].updateReservationStation(tag, value);
+        }
+
+        // update the register file
+        // todo:call the register file update function
+
+        // update the store buffer
+        // todo:call the store buffer update function
     }
 
     public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile) {
@@ -43,7 +69,7 @@ public class IntegerReservationStationBuffer {
                         register = registerFile.getRegister(operands[2]);
 
                         if (register.getQi().equals("0")) {
-                            intAddRS[i].setvJ((int)register.getValue());
+                            intAddRS[i].setvJ((int) register.getValue());
                             intAddRS[i].setReady(true);
                         } else {
                             intAddRS[i].setQJ(register.getQi());
@@ -55,7 +81,7 @@ public class IntegerReservationStationBuffer {
 
                         // todo:el default ehh neseet
                         if (register.getQi().equals("0")) {
-                            intAddRS[i].setvK((int)register.getValue());
+                            intAddRS[i].setvK((int) register.getValue());
                         } else {
                             intAddRS[i].setQJ(register.getQi());
                             intAddRS[i].setReady(false);
@@ -174,21 +200,20 @@ public class IntegerReservationStationBuffer {
             }
         }
     }
+
     public int getNumOfDependencies(String tag) {
-        int count=0;
-        for (int i=0;i<intAddRS.length;i++){
-            if(intAddRS[i].qJ.equals(tag) || intAddRS[i].qK.equals(tag)){
+        int count = 0;
+        for (int i = 0; i < intAddRS.length; i++) {
+            if (intAddRS[i].qJ.equals(tag) || intAddRS[i].qK.equals(tag)) {
                 count++;
             }
         }
 
-        for (int i=0;i<intMultRS.length;i++){
-            if(intMultRS[i].qJ.equals(tag) || intMultRS[i].qK.equals(tag)){
+        for (int i = 0; i < intMultRS.length; i++) {
+            if (intMultRS[i].qJ.equals(tag) || intMultRS[i].qK.equals(tag)) {
                 count++;
             }
         }
         return count;
     }
 }
-
-
