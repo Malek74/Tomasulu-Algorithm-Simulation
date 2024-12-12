@@ -51,6 +51,13 @@ public class StoreBuffer {
         }
     }
 
+    public void updateStoreBuffer(String tag, double value) {
+        // Update all store buffer entries that depend on this tag
+        for (int i = 0; i < buffer.size(); i++) {
+            buffer.get(i).updateStoreBuffer(tag, value);
+        }
+    }
+
     // Print all entries in the buffer
     public void printBuffer() {
         for (int i = 0; i < buffer.size(); i++) {

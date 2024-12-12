@@ -33,13 +33,9 @@ public class RegisterFile {
 		}
 	}
 
-	public void updateRegisterDuetoWriteBack(String name, double value) {
-		Register register = registers.get(name);
-		if (register != null) {
-			register.setValue(value);
-			register.setQi("0");
-		} else {
-			System.out.println("Register " + name + " not found!");
+	public void updateRegister(String tag, double value, String name) {
+		for (int i = 0; i < registers.size(); i++) {
+			registers.get(name + i).updateRegister(tag, value);
 		}
 	}
 

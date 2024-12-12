@@ -22,22 +22,31 @@ public class IntegerReservationStationBuffer {
     }
 
     public void writeBack(String tag) {
-        
+
         int index = ((int) tag.charAt(2)) - 1;
         int value = 0;
 
+        // get the value of the tag
         if (tag.contains("MR")) {
             value = intMultRS[index].getVJ() * intMultRS[index].getVK();
-            mainController.int
         } else if (tag.contains("AR")) {
             value = intAddRS[index].getVJ() + intAddRS[index].getVK();
         }
 
         updateReservationStation(tag, value);
 
+        // update all store buffer entries that depend on this tag
+        mainController.storeBuffer.updateStoreBuffer(tag, value);
+
+        // todo:update all register files that depend on this tag
+        mainController.registerFloat.updateRegister(tag, (float) (value), "F");
+        mainController.registerInt.updateRegister(tag, value, "R");
+
     }
 
     private void updateReservationStation(String tag, int value) {
+
+        // update all reservation stations that depend on this tag
         for (int i = 0; i < intAddRS.length; i++) {
             intAddRS[i].updateReservationStation(tag, value);
         }
@@ -45,12 +54,6 @@ public class IntegerReservationStationBuffer {
         for (int i = 0; i < intMultRS.length; i++) {
             intMultRS[i].updateReservationStation(tag, value);
         }
-
-        // update the register file
-        // todo:call the register file update function
-
-        // update the store buffer
-        // todo:call the store buffer update function
     }
 
     public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile) {
