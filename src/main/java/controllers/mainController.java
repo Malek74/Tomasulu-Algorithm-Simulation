@@ -58,13 +58,13 @@ public class mainController {
         // initialise store buffer
         storeBuffer = new StoreBuffer(2);
 
-        // todo:initialise & load register file
+        // initialise & load register file
         registerFloat = new RegisterFile("F", 31);
         registerInt = new RegisterFile("R", 31);
         loadRegisters("src/main/resources/floatRegisters.txt", registerFloat);
         loadRegisters("src/main/resources/intRegisters.txt", registerInt);
 
-        // todo:initialise & load instruction queue
+        // initialise & load instruction queue
         instructionQueue = new InstructionQueue();
         instructionQueue.loadInstructionsFromFile("src\\main\\resources\\instructions.txt");
 
@@ -146,7 +146,7 @@ public class mainController {
 
         // check if the integer reservation station is ready to write back
         if (tagToWriteBack.contains("MR") || tagToWriteBack.contains("AR")) {
-            // todo:call the integer RS function
+            // call the integer RS function
             integerReservationStationBuffer.writeBack(tagToWriteBack);
         }
 

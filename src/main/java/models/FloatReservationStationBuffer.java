@@ -231,9 +231,12 @@ public class FloatReservationStationBuffer {
         // update reservation stations due to write back
         updateReservationStationBuffer(tagName, value);
 
-        // todo:update register file due to write back
+        // update all store buffer entries that depend on this tag
+        mainController.storeBuffer.updateStoreBuffer(tagName, value);
 
-        //
+        // todo:update all register files that depend on this tag
+        mainController.registerFloat.updateRegister(tagName, value, "F");
+        mainController.registerFloat.updateRegister(tagName, value, "R");
 
     }
 
@@ -246,6 +249,7 @@ public class FloatReservationStationBuffer {
         for (int i = 0; i < floatAddRS.length; i++) {
             floatAddRS[i].updateReservationStation(tag, value);
         }
+
     }
 
     public void printRS() {

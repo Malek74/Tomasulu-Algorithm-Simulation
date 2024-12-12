@@ -67,6 +67,13 @@ public class StoreBufferEntry {
         this.q = null;
     }
 
+    public void updateStoreBuffer(String tagName, double value) {
+        if (q.equals(tagName)) {
+            v = value; // Update the value if the tag matches
+            q = ""; // Clear the dependency tag
+        }
+    }
+
     // String representation for debugging
     @Override
     public String toString() {
