@@ -1,11 +1,19 @@
 package models;
 
+import javafx.scene.transform.Translate;
+import java.nio.ByteBuffer;
+
 public class MemoryBlock {
     private final int address;
     private final byte[] data;
 
     public MemoryBlock(int address, int size) {
         this.address = address;
+        this.data = new byte[size];
+    }
+
+    public MemoryBlock(int size) {
+        this.address = 0;
         this.data = new byte[size];
     }
 
@@ -37,4 +45,29 @@ public class MemoryBlock {
         }
         System.arraycopy(values, 0, data, offset, values.length);
     }
+
+    public float translateWordToFloat() {
+        // Ensure we're reading exactly 4 bytes (size of a float)
+        byte[] wordBytes = this.data; // Fetch the 4 bytes
+        return ByteBuffer.wrap(wordBytes).getFloat(); // Convert to float
+    }
+
+    public double translateWordToDouble() {
+        // Ensure we're reading exactly 4 bytes (size of a float)
+        byte[] wordBytes = this.data; // Fetch the 4 bytes
+        return ByteBuffer.wrap(wordBytes).getDouble(); // Convert to float
+    }
+
+    public int translateWordToInt() {
+        // Ensure we're reading exactly 4 bytes (size of a float)
+        byte[] wordBytes = this.data; // Fetch the 4 bytes
+        return ByteBuffer.wrap(wordBytes).getInt(); // Convert to float
+    }
+
+    public long translateWordToLong() {
+        byte[] wordBytes = this.data; // Fetch the 4 bytes
+        return ByteBuffer.wrap(wordBytes).getLong(); // Convert to float
+    }
+
+
 }
