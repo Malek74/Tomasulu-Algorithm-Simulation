@@ -225,6 +225,7 @@ public class FloatReservationStationBuffer {
 
         if (tagName.contains("MF")) {
             value = (float) (floatMultRS[index].getVJ() * floatMultRS[index].getVK());
+            floatMultRS[index].clearReservationStation();
 
         } else if (tagName.contains("AF")) {
             value = (float) (floatAddRS[index].getVJ() + floatAddRS[index].getVK());
@@ -245,6 +246,7 @@ public class FloatReservationStationBuffer {
         for (String branch : mainController.branchInstructionsBuffer.keySet()) {
             mainController.branchInstructionsBuffer.get(branch).updateDueToWriteBack(tagName, value);
         }
+
     }
 
     public void updateReservationStationBuffer(String tag, float value) {

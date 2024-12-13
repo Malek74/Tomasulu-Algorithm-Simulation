@@ -23,14 +23,17 @@ public class IntegerReservationStationBuffer {
 
     public void writeBack(String tag) {
 
-        int index = Integer.parseInt( tag.charAt(2)+"");
+        int index = Integer.parseInt(tag.charAt(2) + "");
         int value = 0;
 
         // get the value of the tag
         if (tag.contains("MR")) {
             value = intMultRS[index].getVJ() * intMultRS[index].getVK();
+            intMultRS[index].clearReservationStation();
+
         } else if (tag.contains("AR")) {
             value = intAddRS[index].getVJ() + intAddRS[index].getVK();
+            intAddRS[index].clearReservationStation();
         }
 
         updateReservationStation(tag, value);
@@ -47,6 +50,8 @@ public class IntegerReservationStationBuffer {
             mainController.branchInstructionsBuffer.get(branch).updateDueToWriteBack(tag, value);
         }
 
+
+
     }
 
     public void updateReservationStation(String tag, int value) {
@@ -61,7 +66,7 @@ public class IntegerReservationStationBuffer {
         }
     }
 
-    public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile,int time) {
+    public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile, int time) {
 
         // split the instruction
         String[] operands = instruction.getInstruction().split(" ");
@@ -74,7 +79,8 @@ public class IntegerReservationStationBuffer {
                     if (!intAddRS[i].isBusy()) {
 
                         intAddRS[i].setOperation(type);
-                        intAddRS[i].timeLeft=time;
+                        intAddRS[i].timeLeft = time;
+                        intAddRS[i].setBusy(true);
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[2]);
@@ -110,8 +116,9 @@ public class IntegerReservationStationBuffer {
                 for (int i = 0; i < intAddRS.length; i++) {
                     if (!intAddRS[i].isBusy()) {
 
+                        intAddRS[i].setBusy(true);
                         intAddRS[i].setOperation(type);
-                        intAddRS[i].timeLeft=time;
+                        intAddRS[i].timeLeft = time;
                         // set the destination register
 
                         // check first operand in register file
@@ -128,21 +135,22 @@ public class IntegerReservationStationBuffer {
                         // check second operand in register file
 
                         // todo:el default ehh neseet
-                            intAddRS[i].setvK(Integer.parseInt(operands[3]));
+                        intAddRS[i].setvK(Integer.parseInt(operands[3]));
 
                         registerFile.updateRegisterDuetoIssue(operands[1], intAddRS[i].getTagName());
-
-                    }
-                        // todo:add the logic to issue the instruction in the reservation station
                         return true;
                     }
+                    // todo:add the logic to issue the instruction in the reservation station
+
+                }
                 return false;
             case SUBI:
                 for (int i = 0; i < intAddRS.length; i++) {
                     if (!intAddRS[i].isBusy()) {
+                        intAddRS[i].setBusy(true);
 
                         intAddRS[i].setOperation(type);
-                        intAddRS[i].timeLeft=time;
+                        intAddRS[i].timeLeft = time;
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[2]);
@@ -159,12 +167,12 @@ public class IntegerReservationStationBuffer {
 
                         // todo:el default ehh neseet
                         intAddRS[i].setvK(Integer.parseInt(operands[3]));
-                    }
-                    // set the destination register
-                    registerFile.updateRegisterDuetoIssue(operands[1], intAddRS[i].getTagName());
 
-                    // todo:add the logic to issue the instruction in the reservation station
-                    return true;
+                        // set the destination register
+                        registerFile.updateRegisterDuetoIssue(operands[1], intAddRS[i].getTagName());
+
+                        return true;
+                    }
                 }
                 return false;
 
@@ -173,7 +181,7 @@ public class IntegerReservationStationBuffer {
                     if (!intMultRS[i].isBusy()) {
                         intMultRS[i].setBusy(true);
                         intMultRS[i].setOperation(type);
-                        intAddRS[i].timeLeft=time;
+                        intAddRS[i].timeLeft = time;
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[1]);
@@ -208,7 +216,7 @@ public class IntegerReservationStationBuffer {
 
                         intAddRS[i].setBusy(true);
                         intAddRS[i].setOperation(type);
-                        intAddRS[i].timeLeft=time;
+                        intAddRS[i].timeLeft = time;
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[1]);
@@ -243,7 +251,7 @@ public class IntegerReservationStationBuffer {
                     if (!intMultRS[i].isBusy()) {
                         intMultRS[i].setBusy(true);
                         intMultRS[i].setOperation(type);
-                        intAddRS[i].timeLeft=time;
+                        intAddRS[i].timeLeft = time;
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[1]);
