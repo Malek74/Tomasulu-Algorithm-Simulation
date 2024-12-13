@@ -102,7 +102,7 @@ public class FloatReservationStationBuffer {
                         }
 
                         // set the destination register
-                        registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
+                        registerFile.updateRegisterDuetoIssue(operands[1], floatMultRS[i].getTagName());
 
                         return true;
                     }
@@ -182,7 +182,7 @@ public class FloatReservationStationBuffer {
                         }
 
                         // set the destination register
-                        registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
+                        registerFile.updateRegisterDuetoIssue(operands[1], floatMultRS[i].getTagName());
 
                         return true;
                     }

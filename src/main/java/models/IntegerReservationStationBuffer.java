@@ -204,7 +204,7 @@ public class IntegerReservationStationBuffer {
                             intMultRS[i].setReady(false);
                         }
                         // set the destination register
-                        registerFile.updateRegisterDuetoIssue(operands[1], intAddRS[i].getTagName());
+                        registerFile.updateRegisterDuetoIssue(operands[1], intMultRS[i].getTagName());
 
                         return true;
                     }
@@ -275,7 +275,7 @@ public class IntegerReservationStationBuffer {
                             intMultRS[i].setReady(false);
                         }
                         // set the destination register
-                        registerFile.updateRegisterDuetoIssue(operands[1], intAddRS[i].getTagName());
+                        registerFile.updateRegisterDuetoIssue(operands[1], intMultRS[i].getTagName());
 
                         return true;
                     }
