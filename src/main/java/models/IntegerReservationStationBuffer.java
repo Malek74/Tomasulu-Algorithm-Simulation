@@ -28,11 +28,26 @@ public class IntegerReservationStationBuffer {
 
         // get the value of the tag
         if (tag.contains("MR")) {
-            value = intMultRS[index].getVJ() * intMultRS[index].getVK();
+            String op = intMultRS[index].operation.toString();
+            if (op.equals("MULT")) {
+                value = intMultRS[index].getVJ() * intMultRS[index].getVK();
+            } else if (op.equals("DIV")) {
+                value = intMultRS[index].getVJ() / intMultRS[index].getVK();
+            }
             intMultRS[index].clearReservationStation();
 
         } else if (tag.contains("AR")) {
-            value = intAddRS[index].getVJ() + intAddRS[index].getVK();
+            String op = intAddRS[index].operation.toString();
+            if (op.equals("ADD")) {
+                value = intAddRS[index].getVJ() + intAddRS[index].getVK();
+            } else if (op.equals("SUB")) {
+                value = intAddRS[index].getVJ() - intAddRS[index].getVK();
+            } else if (op.equals("DADDI")) {
+                value = intAddRS[index].getVJ() + intAddRS[index].getVK();
+            } else if (op.equals("DSUBI")) {
+                value = intAddRS[index].getVJ() - intAddRS[index].getVK();
+            }
+
             intAddRS[index].clearReservationStation();
         }
 
@@ -49,8 +64,6 @@ public class IntegerReservationStationBuffer {
         for (String branch : mainController.branchInstructionsBuffer.keySet()) {
             mainController.branchInstructionsBuffer.get(branch).updateDueToWriteBack(tag, value);
         }
-
-
 
     }
 
