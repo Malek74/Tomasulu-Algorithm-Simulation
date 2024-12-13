@@ -113,7 +113,7 @@ public class IntegerReservationStationBuffer {
                         if (register.getQi().equals("0")) {
                             intAddRS[i].setvK((int) register.getValue());
                         } else {
-                            intAddRS[i].setQJ(register.getQi());
+                            intAddRS[i].setQK(register.getQi());
                             intAddRS[i].setReady(false);
                         }
 
@@ -213,7 +213,7 @@ public class IntegerReservationStationBuffer {
                         if (register.getQi().equals("")) {
                             intMultRS[i].setvK((int) register.getValue());
                         } else {
-                            intMultRS[i].setQJ(register.getQi());
+                            intMultRS[i].setQK(register.getQi());
                             intMultRS[i].setReady(false);
                         }
                         // set the destination register
@@ -249,7 +249,7 @@ public class IntegerReservationStationBuffer {
                             intAddRS[i].setvK((int) register.getValue());
                             intAddRS[i].setReady(true);
                         } else {
-                            intAddRS[i].setQJ(register.getQi());
+                            intAddRS[i].setQK(register.getQi());
                             intAddRS[i].setReady(false);
                         }
                         // set the destination register
@@ -284,7 +284,7 @@ public class IntegerReservationStationBuffer {
                             intMultRS[i].setvK((int) register.getValue());
                             intMultRS[i].setReady(true);
                         } else {
-                            intMultRS[i].setQJ(register.getQi());
+                            intMultRS[i].setQK(register.getQi());
                             intMultRS[i].setReady(false);
                         }
                         // set the destination register

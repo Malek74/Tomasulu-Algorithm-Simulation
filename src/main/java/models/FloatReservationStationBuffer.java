@@ -58,7 +58,7 @@ public class FloatReservationStationBuffer {
                         if (register.getQi().equals("0")) {
                             floatAddRS[i].setVK(register.getValue());
                         } else {
-                            floatAddRS[i].setQJ(register.getQi());
+                            floatAddRS[i].setQK(register.getQi());
                             floatAddRS[i].setReady(false);
                         }
 
@@ -97,7 +97,7 @@ public class FloatReservationStationBuffer {
                             floatMultRS[i].setVK(register.getValue());
 
                         } else {
-                            floatMultRS[i].setQJ(register.getQi());
+                            floatMultRS[i].setQK(register.getQi());
                             floatMultRS[i].setReady(false);
                         }
 
@@ -138,7 +138,7 @@ public class FloatReservationStationBuffer {
                             floatAddRS[i].setVK(register.getValue());
 
                         } else {
-                            floatAddRS[i].setQJ(register.getQi());
+                            floatAddRS[i].setQK(register.getQi());
                             floatAddRS[i].setReady(false);
                         }
 
@@ -177,7 +177,7 @@ public class FloatReservationStationBuffer {
                         if (register.getQi().equals("0")) {
                             floatMultRS[i].setVK(register.getValue());
                         } else {
-                            floatMultRS[i].setQJ(register.getQi());
+                            floatMultRS[i].setQK(register.getQi());
                             floatMultRS[i].setReady(false);
                         }
 
