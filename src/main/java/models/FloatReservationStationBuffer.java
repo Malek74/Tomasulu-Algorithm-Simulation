@@ -39,8 +39,6 @@ public class FloatReservationStationBuffer {
                         floatAddRS[i].setOperation(type);
                         floatAddRS[i].timeLeft=time;
 
-                        // set the destination register
-                        registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[2]);
@@ -64,6 +62,9 @@ public class FloatReservationStationBuffer {
                             floatAddRS[i].setReady(false);
                         }
 
+                        // set the destination register
+                        registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
+
                         // todo:add the logic to issue the instruction in the reservation station
                         return true;
                     }
@@ -76,8 +77,6 @@ public class FloatReservationStationBuffer {
                         floatMultRS[i].setOperation(type);
                         floatMultRS[i].timeLeft=time;
 
-                        // set the destination register
-                        registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[2]);
@@ -101,6 +100,9 @@ public class FloatReservationStationBuffer {
                             floatMultRS[i].setQJ(register.getQi());
                             floatMultRS[i].setReady(false);
                         }
+
+                        // set the destination register
+                        registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
 
                         return true;
                     }
@@ -115,8 +117,6 @@ public class FloatReservationStationBuffer {
                         floatAddRS[i].setOperation(type);
                         floatAddRS[i].timeLeft=time;
 
-                        // set the destination register
-                        registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[2]);
@@ -142,6 +142,9 @@ public class FloatReservationStationBuffer {
                             floatAddRS[i].setReady(false);
                         }
 
+                        // set the destination register
+                        registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
+
                         // todo:add the logic to issue the instruction in the reservation station
                         return true;
                     }
@@ -154,8 +157,6 @@ public class FloatReservationStationBuffer {
                         floatMultRS[i].setOperation(type);
                         floatMultRS[i].timeLeft=time;
 
-                        // set the destination register
-                        registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[2]);
@@ -179,6 +180,9 @@ public class FloatReservationStationBuffer {
                             floatMultRS[i].setQJ(register.getQi());
                             floatMultRS[i].setReady(false);
                         }
+
+                        // set the destination register
+                        registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
 
                         return true;
                     }
