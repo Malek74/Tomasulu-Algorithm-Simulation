@@ -112,7 +112,7 @@ public class IntegerReservationStationBuffer {
                     }
                 }
                 return false;
-            case ADDI:
+            case DADDI:
                 for (int i = 0; i < intAddRS.length; i++) {
                     if (!intAddRS[i].isBusy()) {
 
@@ -144,7 +144,7 @@ public class IntegerReservationStationBuffer {
 
                 }
                 return false;
-            case SUBI:
+            case DSUBI:
                 for (int i = 0; i < intAddRS.length; i++) {
                     if (!intAddRS[i].isBusy()) {
                         intAddRS[i].setBusy(true);

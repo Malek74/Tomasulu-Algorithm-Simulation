@@ -106,12 +106,12 @@ public class mainController {
         if (op.equals("ADD.D") || op.equals("ADD.S")) {
             return floatReservationStationBuffer.issueInstruction(instruction, operation.ADD, registerFloat,latencyMap.get("add"));
         }
-        if(op.equals("ADDI")){
-            return integerReservationStationBuffer.issueInstruction(instruction,operation.ADDI,registerInt,latencyMap.get("add"));
+        if(op.equals("DADDI")){
+            return integerReservationStationBuffer.issueInstruction(instruction,operation.DADDI,registerInt,latencyMap.get("add"));
         }
 
-        if(op.equals("SUBI")){
-            return integerReservationStationBuffer.issueInstruction(instruction,operation.SUBI,registerInt,latencyMap.get("sub"));
+        if(op.equals("DSUBI")){
+            return integerReservationStationBuffer.issueInstruction(instruction,operation.DSUBI,registerInt,latencyMap.get("sub"));
         }
         if (op.equals("SUB.D") || op.equals("SUB.S")) {
             return floatReservationStationBuffer.issueInstruction(instruction, operation.SUB, registerFloat,latencyMap.get("sub"));

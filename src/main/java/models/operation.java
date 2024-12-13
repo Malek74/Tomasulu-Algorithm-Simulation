@@ -7,8 +7,8 @@ public enum operation {
     SUB,
     STORE,
     LOAD,
-    SUBI,
-    ADDI
+    DSUBI,
+    DADDI
 }
 
 
