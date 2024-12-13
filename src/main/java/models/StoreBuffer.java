@@ -9,7 +9,7 @@ public class StoreBuffer {
     public StoreBuffer(int size) {
         buffer = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            buffer.add(new StoreBufferEntry());
+            buffer.add(new StoreBufferEntry("S" + i));
         }
     }
 
@@ -27,7 +27,7 @@ public class StoreBuffer {
     }
 
     // Set an entry (mark busy, set address, and manage dependencies)
-    public void setEntry(int index, int address, double v, String q) {
+    public void setEntry(int index, int address, float v, String q) {
         if (index >= 0 && index < buffer.size()) {
             StoreBufferEntry entry = buffer.get(index);
             entry.setBusy(true);
@@ -42,6 +42,13 @@ public class StoreBuffer {
         }
     }
 
+    public void executeStoreBuffer() {
+        for (StoreBufferEntry storeBufferEntry : buffer) {
+            storeBufferEntry.execute();
+
+        }
+    }
+
     // Clear a buffer entry
     public void clearEntry(int index) {
         if (index >= 0 && index < buffer.size()) {
@@ -51,7 +58,7 @@ public class StoreBuffer {
         }
     }
 
-    public void updateStoreBuffer(String tag, double value) {
+    public void updateStoreBuffer(String tag, float value) {
         // Update all store buffer entries that depend on this tag
         for (int i = 0; i < buffer.size(); i++) {
             buffer.get(i).updateStoreBuffer(tag, value);
@@ -65,7 +72,7 @@ public class StoreBuffer {
         }
     }
 
-    public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile) {
+    public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile,int time) {
         // Parse the instruction
         String[] operands = instruction.getInstruction().split(" ");
         String sourceRegisterName = operands[1]; // e.g., "F4"
@@ -81,6 +88,7 @@ public class StoreBuffer {
                 double valueToStore;
 
                 String producingTag;
+                entry.timeLeft=time;
 
                 if (sourceRegister.getQi().equals("0")) {
                     valueToStore = sourceRegister.getValue(); // Value is ready
@@ -91,7 +99,7 @@ public class StoreBuffer {
                     producingTag = sourceRegister.getQi();
                 }
                 // Set the store buffer entry
-                setEntry(i, effectiveAddress, valueToStore, producingTag);
+                setEntry(i, effectiveAddress, (float) valueToStore, producingTag);
                 // Update the instruction's status
                 instruction.setStatus("Issued to StoreBuffer");
                 return true; // Successfully issued
@@ -101,7 +109,7 @@ public class StoreBuffer {
     }
 
     public int getNumOfDependencies(String tag) {
-        StoreBufferEntry entry = new StoreBufferEntry();
+        StoreBufferEntry entry = new StoreBufferEntry("");
         int count = 0;
 
         for (int i = 0; i < buffer.size(); i++) {
@@ -122,14 +130,11 @@ public class StoreBuffer {
 
         // 2. Set entries with ready values
         System.out.println("Test Case 2: Set entries with ready values");
-        storeBuffer.setEntry(0, 100, 4.5, null); // Address 100, Value 4.5, no dependency
-        storeBuffer.setEntry(1, 200, 7.2, null); // Address 200, Value 7.2, no dependency
         storeBuffer.printBuffer();
         System.out.println();
 
         // 3. Set entries with dependencies
         System.out.println("Test Case 3: Set entries with dependencies");
-        storeBuffer.setEntry(2, 300, Double.NaN, "M1"); // Address 300, dependency on M1
         storeBuffer.printBuffer();
         System.out.println();
 
@@ -142,20 +147,16 @@ public class StoreBuffer {
         // 5. Modify a dependent entry when its value becomes ready
         System.out.println("Test Case 5: Resolve a dependency by setting its value");
         StoreBufferEntry entry = storeBuffer.getEntry(2);
-        entry.setV(9.8); // Dependency resolved, set value 9.8
+        entry.setV(9.8F); // Dependency resolved, set value 9.8
         storeBuffer.printBuffer();
         System.out.println();
 
         // 6. Handle invalid indices
         System.out.println("Test Case 6: Handle invalid indices");
-        try {
-            storeBuffer.setEntry(3, 400, 5.0, null); // Invalid index
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Caught Exception: " + e.getMessage());
-        }
+
     }
 
-    public void writeEntry(String TagName){
+    public void writeEntry(String TagName) {
         for (StoreBufferEntry storeBufferEntry : buffer) {
             if (storeBufferEntry.getTag().equals(TagName)) {
                 storeBufferEntry.writeToMemory();
@@ -163,5 +164,9 @@ public class StoreBuffer {
             }
         }
         return;
+    }
+
+    public ArrayList<StoreBufferEntry> getBuffer() {
+        return buffer;
     }
 }

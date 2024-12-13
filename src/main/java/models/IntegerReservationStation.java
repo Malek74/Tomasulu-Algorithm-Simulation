@@ -36,6 +36,9 @@ public class IntegerReservationStation extends ReservationStation {
             vK = value;
             qK = "";
         }
+        if (qJ.equals("") && qK.equals("")) {
+            isReady = true;
+        }
     }
 
     public void clearReservationStation() {

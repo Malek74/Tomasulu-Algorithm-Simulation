@@ -42,6 +42,10 @@ public class FloatReservationStation extends ReservationStation {
             vK = value;
             qK = "";
         }
+
+        if (qJ.equals("") && qK.equals("")) {
+            isReady = true;
+        }
     }
 
     public String toString() {

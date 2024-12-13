@@ -1,5 +1,7 @@
 package models;
 
+import controllers.mainController;
+
 public class ReservationStation {
     public String tagName;
     boolean busy;
@@ -19,6 +21,17 @@ public class ReservationStation {
 
     public void setTimeLeft(int timeLeft) {
         this.timeLeft = timeLeft;
+    }
+
+    public void executeReservationStation() {
+        if (isReady && busy) {
+            timeLeft--;
+            if (timeLeft == 0) {
+                mainController.needsToWriteBack.add(tagName);
+            }
+        }
+
+        
     }
 
     public void setTagName(String tagName) {
@@ -77,9 +90,9 @@ public class ReservationStation {
     public void clearReservationStation() {
         timeLeft = -1;
         busy = false;
-        operation = null;
-        qJ = null;
-        qK = null;
+        operation =null;
+        qJ = "";
+        qK = "";
 
     }
 

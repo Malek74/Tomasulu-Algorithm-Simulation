@@ -11,11 +11,30 @@ public class StoreBufferEntry {
     int timeLeft;
 
     // Constructor: Initialize entry as empty
+    public StoreBufferEntry(String tag) {
+        this.tag = tag;
+        this.busy = false;
+        this.address = 0;
+        this.v = Float.NaN; // NaN indicates value is not ready
+        this.q = ""; // Null indicates no dependency
+
+    }
+
     public StoreBufferEntry() {
         this.busy = false;
         this.address = 0;
         this.v = Float.NaN; // NaN indicates value is not ready
-        this.q = null; // Null indicates no dependency
+        this.q = ""; // Null indicates no dependency
+    }
+
+    public void execute() {
+        if (busy && !Float.isNaN(v)) {
+            timeLeft--;
+            if (timeLeft == 0) {
+                mainController.needsToWriteBack.add(tag);
+            }
+        }
+
     }
 
     // Getters and Setters
@@ -65,7 +84,7 @@ public class StoreBufferEntry {
     public void clear() {
         this.busy = false;
         this.address = 0;
-        this.v = Double.NaN;
+        this.v = Float.NaN;
         this.q = null;
     }
 
@@ -86,9 +105,8 @@ public class StoreBufferEntry {
     }
 
     public void writeToMemory() {
-       mainController.memory.writeWordToMemory(address, v);
+        mainController.memory.writeWordToMemory(address, v);
         this.clear();
     }
-
 
 }

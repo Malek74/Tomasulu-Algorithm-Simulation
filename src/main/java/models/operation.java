@@ -5,5 +5,10 @@ public enum operation {
     DIV,
     ADD,
     SUB,
-    STORE
+    STORE,
+    LOAD,
+    SUBI,
+    ADDI
 }
+
+

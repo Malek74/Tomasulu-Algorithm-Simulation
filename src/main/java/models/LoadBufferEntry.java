@@ -1,5 +1,6 @@
 package models;
-import controllers.mainController
+
+import controllers.mainController;
 
 public class LoadBufferEntry {
 
@@ -9,9 +10,20 @@ public class LoadBufferEntry {
     int timeLeft;
 
     // Constructor
-    public LoadBufferEntry() {
+    public LoadBufferEntry(String tag) {
+        this.tag = tag;
         this.busy = false;
         this.address = -1; // -1 indicates no address stored
+    }
+
+    public void execute() {
+        if (busy) {
+            timeLeft--;
+            if (timeLeft == 0) {
+                mainController.needsToWriteBack.add(tag);
+            }
+        }
+
     }
 
     // Getters and Setters

@@ -6,8 +6,8 @@ import models.Instruction;
 import models.operation;
 
 public class FloatReservationStationBuffer {
-    FloatReservationStation[] floatMultRS;
-    FloatReservationStation[] floatAddRS;
+    public FloatReservationStation[] floatMultRS;
+    public FloatReservationStation[] floatAddRS;
 
     public FloatReservationStationBuffer(int multSize, int addSize) {
         floatMultRS = new FloatReservationStation[multSize];
@@ -24,7 +24,7 @@ public class FloatReservationStationBuffer {
         }
     }
 
-    public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile) {
+    public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile,int time) {
 
         // split the instruction
         String[] operands = instruction.getInstruction().split(" ");
@@ -37,6 +37,7 @@ public class FloatReservationStationBuffer {
 
                         floatAddRS[i].setBusy(true);
                         floatAddRS[i].setOperation(type);
+                        floatAddRS[i].timeLeft=time;
 
                         // set the destination register
                         registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
@@ -73,6 +74,7 @@ public class FloatReservationStationBuffer {
                     if (!floatMultRS[i].isBusy()) {
                         floatMultRS[i].setBusy(true);
                         floatMultRS[i].setOperation(type);
+                        floatMultRS[i].timeLeft=time;
 
                         // set the destination register
                         registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
@@ -111,6 +113,7 @@ public class FloatReservationStationBuffer {
 
                         floatAddRS[i].setBusy(true);
                         floatAddRS[i].setOperation(type);
+                        floatAddRS[i].timeLeft=time;
 
                         // set the destination register
                         registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
@@ -149,6 +152,7 @@ public class FloatReservationStationBuffer {
                     if (!floatMultRS[i].isBusy()) {
                         floatMultRS[i].setBusy(true);
                         floatMultRS[i].setOperation(type);
+                        floatMultRS[i].timeLeft=time;
 
                         // set the destination register
                         registerFile.updateRegisterDuetoIssue(operands[1], floatAddRS[i].getTagName());
@@ -187,14 +191,10 @@ public class FloatReservationStationBuffer {
 
     public void executeInstruction() {
         for (int i = 0; i < floatMultRS.length; i++) {
-            if (floatMultRS[i].isBusy() && floatMultRS[i].isReady) {
-                floatMultRS[i].setTimeLeft(floatMultRS[i].getTimeLeft() - 1);
-            }
+            floatMultRS[i].executeReservationStation();
         }
         for (int i = 0; i < floatAddRS.length; i++) {
-            if (floatAddRS[i].isBusy() && floatAddRS[i].isReady) {
-                floatAddRS[i].setTimeLeft(floatAddRS[i].getTimeLeft() - 1);
-            }
+            floatAddRS[i].executeReservationStation();
         }
     }
 
@@ -207,7 +207,7 @@ public class FloatReservationStationBuffer {
         }
 
         for (int i = 0; i < floatMultRS.length; i++) {
-            if (floatAddRS[i].qJ.equals(tag) || floatAddRS[i].qK.equals(tag)) {
+            if (floatMultRS[i].qJ.equals(tag) || floatMultRS[i].qK.equals(tag)) {
                 count++;
             }
         }
@@ -215,16 +215,15 @@ public class FloatReservationStationBuffer {
     }
 
     public void writeBack(String tagName) {
-        int index = ((int) tagName.charAt(2)) - 1;
+        int index = Integer.parseInt( tagName.charAt(2)+"") ;
 
         float value = 0;
 
         if (tagName.contains("MF")) {
             value = (float) (floatMultRS[index].getVJ() * floatMultRS[index].getVK());
 
-            floatMultRS[index].clearReservationStation();
         } else if (tagName.contains("AF")) {
-            value = (float) (floatMultRS[index].getVJ() + floatMultRS[index].getVK());
+            value = (float) (floatAddRS[index].getVJ() + floatAddRS[index].getVK());
             floatAddRS[index].clearReservationStation();
         }
 
@@ -236,8 +235,12 @@ public class FloatReservationStationBuffer {
 
         // todo:update all register files that depend on this tag
         mainController.registerFloat.updateRegister(tagName, value, "F");
-        mainController.registerFloat.updateRegister(tagName, value, "R");
+        mainController.registerInt.updateRegister(tagName, value, "R");
 
+        // update all branches that depend on tag
+        for (String branch : mainController.branchInstructionsBuffer.keySet()) {
+            mainController.branchInstructionsBuffer.get(branch).updateDueToWriteBack(tagName, value);
+        }
     }
 
     public void updateReservationStationBuffer(String tag, float value) {
@@ -252,16 +255,11 @@ public class FloatReservationStationBuffer {
 
     }
 
-    public void printRS() {
-        System.out.println("Printing the float Multiplication reservation station buffer\n");
-        for (int i = 0; i < floatMultRS.length; i++) {
-            System.out.println(floatMultRS[i].toString());
-        }
-
-        System.out.println("Printing the float addition reservation station buffer\n");
-        for (int i = 0; i < floatAddRS.length; i++) {
-            System.out.println(floatAddRS[i].toString());
-        }
+    public FloatReservationStation[] getFloatAddRS() {
+        return floatAddRS;
     }
 
+    public FloatReservationStation[] getFloatMultRS() {
+        return floatMultRS;
+    }
 }

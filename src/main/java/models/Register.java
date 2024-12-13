@@ -7,8 +7,14 @@ public class Register {
 
 	public Register(String name) {
 		this.name = name;
-		this.Qi = null;
+		this.Qi = "";
 		this.value = 0;
+	}
+
+	public Register(String name, float value, String Qi) {
+		this.name = name;
+		this.Qi = Qi;
+		this.value = value;
 	}
 
 	public String getName() {
@@ -39,7 +45,7 @@ public class Register {
 	public void updateRegister(String tag, float value) {
 		if (Qi.equals(tag)) {
 			this.value = value;
-			this.Qi = null;
+			this.Qi = "0";
 		}
 	}
 

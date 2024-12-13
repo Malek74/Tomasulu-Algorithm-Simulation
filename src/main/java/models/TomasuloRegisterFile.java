@@ -14,7 +14,7 @@ public class TomasuloRegisterFile {
         for (int i = 1; i <= 32; i++) {
             System.out.print("R" + i + ": ");
             double value = scanner.nextDouble();
-            intRegisterFile.initializeRegister("R" + i, value);
+            intRegisterFile.initializeRegister("R" + i, (float) value);
         }
 
         
@@ -22,7 +22,7 @@ public class TomasuloRegisterFile {
         for (int i = 1; i <= 32; i++) {
             System.out.print("F" + i + ": ");
             double value = scanner.nextDouble();
-            floatRegisterFile.initializeRegister("F" + i, value);
+            floatRegisterFile.initializeRegister("F" + i, (float) value);
         }
 
         System.out.println("\nInteger Register File:");

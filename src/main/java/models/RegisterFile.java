@@ -17,6 +17,12 @@ public class RegisterFile {
 		}
 	}
 
+
+
+	public int size() {
+		return registers.size();
+	}
+
 	public Register getRegister(String name) {
 		return registers.get(name);
 	}
@@ -33,13 +39,13 @@ public class RegisterFile {
 		}
 	}
 
-	public void updateRegister(String tag, double value, String name) {
+	public void updateRegister(String tag, float value, String name) {
 		for (int i = 0; i < registers.size(); i++) {
 			registers.get(name + i).updateRegister(tag, value);
 		}
 	}
 
-	public void initializeRegister(String name, double value) {
+	public void initializeRegister(String name, float value) {
 		Register register = registers.get(name);
 		if (register != null) {
 			register.setValue(value);

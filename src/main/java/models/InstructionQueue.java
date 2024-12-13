@@ -8,7 +8,6 @@ import java.util.*;
 public class InstructionQueue {
     private LinkedList<Instruction> instructionQueue = new LinkedList<>();
     private int index = 0;
-    private Set<String> uniqueInstructions = new HashSet<>();  // To store unique instructions from the file
 
     // Method to prompt user for latencies and load instructions
     public void initialize() {
@@ -20,9 +19,10 @@ public class InstructionQueue {
             // Add the file existence check here
             File file = new File(filePath);
             if (file.exists()) {
-                loadInstructionsFromFile(filePath);  // Load instructions from the file
+                loadInstructionsFromFile(filePath); // Load instructions from the file
             } else {
-                System.err.println("File not found at: " + filePath);  // If the file doesn't exist, show an error message
+                System.err.println("File not found at: " + filePath); // If the file doesn't exist, show an error
+                                                                      // message
             }
         }
 
@@ -43,7 +43,7 @@ public class InstructionQueue {
     }
 
     // Load instructions from a text file
-   public void loadInstructionsFromFile(String filePath) {
+    public void loadInstructionsFromFile(String filePath) {
         try {
             List<String> lines = Files.readAllLines(Paths.get(filePath));
             for (String line : lines) {
@@ -54,10 +54,10 @@ public class InstructionQueue {
                 // Extract the operation from the instruction line
                 String operation = extractOperation(line);
                 // Add the operation to the uniqueInstructions set to avoid duplicates
-                uniqueInstructions.add(operation);
 
-                // Add the instruction to the queue with a placeholder latency (we'll update it later)
-                instructionQueue.add(new Instruction(line));  // Placeholder latency (-1) for now
+                // Add the instruction to the queue with a placeholder latency (we'll update it
+                // later)
+                instructionQueue.add(new Instruction(line)); // Placeholder latency (-1) for now
             }
         } catch (IOException e) {
             System.err.println("Error reading the file: " + e.getMessage());
@@ -76,7 +76,7 @@ public class InstructionQueue {
                 }
             } catch (InputMismatchException e) {
                 System.out.print("Invalid input! Please enter a valid positive integer for latency: ");
-                scanner.next();  // Clear the invalid input
+                scanner.next(); // Clear the invalid input
             }
         }
         return latency;
@@ -84,7 +84,7 @@ public class InstructionQueue {
 
     public void printInstructionQueue() {
         for (Instruction instruction : instructionQueue) {
-            System.out.println(instruction.getInstruction() );
+            System.out.println(instruction.getInstruction());
         }
     }
 
@@ -103,6 +103,9 @@ public class InstructionQueue {
         return instructionQueue.peek();
     }
 
+    public int size(){
+        return instructionQueue.size();
+    }
     public static void main(String[] args) {
         InstructionQueue manager = new InstructionQueue();
         manager.initialize();

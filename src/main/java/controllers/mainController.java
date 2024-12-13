@@ -12,13 +12,12 @@ import java.util.*;
 
 public class mainController {
 
-    private Hashtable<String, Integer> latencyMap = new Hashtable<>();
+    public static Hashtable<String, Integer> latencyMap = new Hashtable<>();
     public static LoadBuffer loadBuffer;
     public static StoreBuffer storeBuffer;
     public static RegisterFile registerFloat;
     public static RegisterFile registerInt;
     public static InstructionQueue instructionQueue;
-    public static int clock = 0;
     public static ArrayList<String> needsToWriteBack = new ArrayList();
     public static FloatReservationStationBuffer floatReservationStationBuffer;
     public static IntegerReservationStationBuffer integerReservationStationBuffer;
@@ -27,11 +26,11 @@ public class mainController {
     public static ArrayList<ReservationStation> reservationStationsWriteBack;
     public static ArrayList<StoreBufferEntry> storeBufferEntryWriteBack;
     public static ArrayList<LoadBufferEntry> loadBufferEntryWriteBack;
+    public static Hashtable<String,BranchInstruction> branchInstructionsBuffer;
 
     public static void main(String[] args) {
 
         // initialise all object
-        initialiseObjects();
         // todo: load latencies
         Instruction currentInstruction;
         while (true) {
@@ -48,16 +47,21 @@ public class mainController {
         }
     }
 
-    public static void initialiseObjects() {
+    public static void initialiseObjects(int floatMult,
+                                         int floatAdd,
+                                         int load,
+                                         int store,
+                                         int block,
+                                         int cacheSize) {
         // initialise reservation stations
-        floatReservationStationBuffer = new FloatReservationStationBuffer(3, 3);
-        integerReservationStationBuffer = new IntegerReservationStationBuffer(3, 3);
+        floatReservationStationBuffer = new FloatReservationStationBuffer(floatMult, floatAdd);
+        integerReservationStationBuffer = new IntegerReservationStationBuffer(floatMult, floatMult);
 
         // initialise load buffer
-        loadBuffer = new LoadBuffer(3);
+        loadBuffer = new LoadBuffer(load);
 
         // initialise store buffer
-        storeBuffer = new StoreBuffer(2);
+        storeBuffer = new StoreBuffer(store);
 
         // initialise & load register file
         registerFloat = new RegisterFile("F", 31);
@@ -70,12 +74,15 @@ public class mainController {
         instructionQueue.loadInstructionsFromFile("src\\main\\resources\\instructions.txt");
 
         // todo:initialise memory cache
-        memory = new MainMemory(16);
-        cache = new Cache(10);
+        memory = new MainMemory(block);
+        cache = new Cache(cacheSize);
+
+        //initialise branch buffer
+        branchInstructionsBuffer = new Hashtable<>();
 
     }
 
-    public static void loadRegisters(String path, RegisterFile registerFile) {
+    private static void loadRegisters(String path, RegisterFile registerFile) {
         try {
             List<String> lines = Files.readAllLines(Paths.get(path));
             for (String line : lines) {
@@ -84,7 +91,7 @@ public class mainController {
                 }
                 String[] parts = line.split("=");
 
-                registerFile.initializeRegister(parts[0], Double.parseDouble(parts[1]));
+                registerFile.initializeRegister(parts[0], Float.parseFloat(parts[1]));
 
             }
         } catch (IOException e) {
@@ -97,19 +104,34 @@ public class mainController {
 
         // handle issue of float reservation buffers
         if (op.equals("ADD.D") || op.equals("ADD.S")) {
-            return floatReservationStationBuffer.issueInstruction(instruction, operation.ADD, registerFloat);
+            return floatReservationStationBuffer.issueInstruction(instruction, operation.ADD, registerFloat,latencyMap.get("add"));
+        }
+        if(op.equals("ADDI")){
+            return integerReservationStationBuffer.issueInstruction(instruction,operation.ADDI,registerInt,latencyMap.get("add"));
+        }
+
+        if(op.equals("SUBI")){
+            return integerReservationStationBuffer.issueInstruction(instruction,operation.SUBI,registerInt,latencyMap.get("sub"));
         }
         if (op.equals("SUB.D") || op.equals("SUB.S")) {
-            return floatReservationStationBuffer.issueInstruction(instruction, operation.SUB, registerFloat);
+            return floatReservationStationBuffer.issueInstruction(instruction, operation.SUB, registerFloat,latencyMap.get("sub"));
         }
         if (op.equals("MUL.D") || op.equals("MUL.S")) {
-            return floatReservationStationBuffer.issueInstruction(instruction, operation.MULT, registerFloat);
+            return floatReservationStationBuffer.issueInstruction(instruction, operation.MULT, registerFloat,latencyMap.get("mult"));
         }
         if (op.equals("DIV.D") || op.equals("DIV.S")) {
-            return floatReservationStationBuffer.issueInstruction(instruction, operation.DIV, registerFloat);
+            return floatReservationStationBuffer.issueInstruction(instruction, operation.DIV, registerFloat,latencyMap.get("div"));
         }
         if (op.equals("SW") || op.equals("SD") || op.equals("S.S") || op.equals("S.D")) {
-            return storeBuffer.issueInstruction(instruction, operation.STORE, registerFloat);
+            return storeBuffer.issueInstruction(instruction, operation.STORE, registerFloat,latencyMap.get("store"));
+        }
+        if (op.equals("LW") || op.equals("LD") || op.equals("L.S") || op.equals("L.D")) {
+            return loadBuffer.issueInstructionLoad(instruction, operation.LOAD, registerFloat,latencyMap.get("load"));
+        }
+        if(op.equals("BEQ") || op.equals("BNE")) {
+            BranchInstruction branchInstruction= new BranchInstruction(instruction,op,instructionQueue.getIndex());
+            branchInstructionsBuffer.put("B"+instructionQueue.getIndex(),branchInstruction);
+            return branchInstruction.updateDueToIssue(instruction,op);
         }
         return false;
     }
@@ -122,7 +144,9 @@ public class mainController {
         String tagToWriteBack = "None";
 
         // loop on writeback array to get one with the highest number of dependencies
+        System.out.println(needsToWriteBack);
         for (int i = 0; i < needsToWriteBack.size(); i++) {
+
             tagName = needsToWriteBack.get(i);
             comp = getNumberOfDependencies(tagName);
 
@@ -132,6 +156,10 @@ public class mainController {
                 tagToWriteBack = tagName;
             }
 
+            //execute branch instruction if found
+            if(tagName.contains("B")){
+                instructionQueue.setIndex(branchInstructionsBuffer.get(tagName).getDestination());
+            }
         }
         return tagToWriteBack;
     }
@@ -159,17 +187,12 @@ public class mainController {
         }
 
         if (tagToWriteBack.contains("L")) {
-            loadBuffer.writeBackLoad();
+            loadBuffer.writeBackLoad(tagToWriteBack);
         }
 
         // remove the tag from the write back array
         needsToWriteBack.remove(tagToWriteBack);
     }
-
-    public void promptForLatencies(Scanner scanner) {
-
-    }
-
     public static int getNumberOfDependencies(String tagName) {
         int count = 0;
 
@@ -192,8 +215,45 @@ public class mainController {
 
     }
 
-    static public void loadLatencies() {
-        // todo:load latencies
-    }
+    public static void execute(){
 
+        //execute the reservation stations
+        floatReservationStationBuffer.executeInstruction();
+        integerReservationStationBuffer.executeInstruction();
+
+        //execute the store buffer
+        storeBuffer.executeStoreBuffer();
+
+        //execute the load buffer
+        loadBuffer.executeLoadBuffer();
+
+        //execute branch instructions
+
+        // update all branches that depend on tag
+        for (String branch : branchInstructionsBuffer.keySet()) {
+            branchInstructionsBuffer.get(branch).execute();
+        }
+    }
+    public static void updateClockCycle(){
+
+        //write back
+        writeBack();
+
+        //execute
+        execute();
+
+        //issue instruction
+        Instruction instructionToIssue;
+        if(instructionQueue.getIndex()<instructionQueue.size()){
+             instructionToIssue= instructionQueue.fetchInstruction();
+            //if instruction can be issued increment the index
+            if(issueInstruction(instructionToIssue, instructionToIssue.extractOperation())){
+                System.out.println(instructionToIssue.getInstruction()+" issued");
+                instructionQueue.setIndex(instructionQueue.getIndex() + 1);
+            }
+        }
+
+
+
+    }
 }
