@@ -1,21 +1,23 @@
 package models;
 
+import controllers.TomasuloInputController;
 import controllers.mainController;
 
 public class StoreBufferEntry {
     private boolean busy; // Whether this buffer entry is in use
     private int address; // Memory address for the store operation
     private String tag;
-    private float v; // Value to store (if ready)
+    private MemoryBlock v; // Value to store (if ready)
     private String q; // Tag of the producing reservation station or functional unit (if not ready)
     int timeLeft;
+    private boolean isReady;
 
     // Constructor: Initialize entry as empty
     public StoreBufferEntry(String tag) {
         this.tag = tag;
         this.busy = false;
         this.address = 0;
-        this.v = Float.NaN; // NaN indicates value is not ready
+        this.v = new MemoryBlock(TomasuloInputController.blockSize); // NaN indicates value is not ready
         this.q = ""; // Null indicates no dependency
 
     }
@@ -23,12 +25,12 @@ public class StoreBufferEntry {
     public StoreBufferEntry() {
         this.busy = false;
         this.address = 0;
-        this.v = Float.NaN; // NaN indicates value is not ready
+        this.v = new MemoryBlock(TomasuloInputController.blockSize); // NaN indicates value is not ready
         this.q = ""; // Null indicates no dependency
     }
 
     public void execute() {
-        if (busy && !Float.isNaN(v)) {
+        if (busy && isReady) {
             timeLeft--;
             if (timeLeft == 0) {
                 mainController.needsToWriteBack.add(tag);
@@ -55,12 +57,32 @@ public class StoreBufferEntry {
     }
 
     public float getV() {
-        return v;
+        return v.translateWordToFloat();
     }
 
-    public void setV(float v) {
-        this.v = v;
-        this.q = null; // If value is set, no dependency exists
+    public void setV(float value) {
+        v.translateFloatToWord(value);
+        this.q = ""; // If value is set, no dependency exists
+    }
+
+    public void setV(MemoryBlock value) {
+        this.v = value;
+        this.q = ""; // If value is set, no dependency exists
+    }
+
+    public void setV(double value) {
+        v.translateDoubleToWord(value);
+        this.q = ""; // If value is set, no dependency exists
+    }
+
+    public void setV(int value) {
+        v.translateIntToWord(value);
+        this.q = ""; // If value is set, no dependency exists
+    }
+
+    public void setV(long value) {
+        v.translateLongToWord(value);
+        this.q = ""; // If value is set, no dependency exists
     }
 
     public String getQ() {
@@ -69,7 +91,7 @@ public class StoreBufferEntry {
 
     public void setQ(String q) {
         this.q = q;
-        this.v = Float.NaN; // If dependency exists, value is not ready
+        this.v = new MemoryBlock(TomasuloInputController.blockSize); // If dependency exists, value is not ready
     }
 
     public void setTag(String tag) {
@@ -84,13 +106,34 @@ public class StoreBufferEntry {
     public void clear() {
         this.busy = false;
         this.address = 0;
-        this.v = Float.NaN;
-        this.q = null;
+        this.v = new MemoryBlock(TomasuloInputController.blockSize);
+        this.q = "";
     }
 
     public void updateStoreBuffer(String tagName, float value) {
         if (q.equals(tagName)) {
-            v = value; // Update the value if the tag matches
+            v.translateFloatToWord(value); // Update the value if the tag matches
+            q = ""; // Clear the dependency tag
+        }
+    }
+
+    public void updateStoreBuffer(String tagName, double value) {
+        if (q.equals(tagName)) {
+            v.translateDoubleToWord(value); // Update the value if the tag matches
+            q = ""; // Clear the dependency tag
+        }
+    }
+
+    public void updateStoreBuffer(String tagName, int value) {
+        if (q.equals(tagName)) {
+            v.translateIntToWord(value); // Update the value if the tag matches
+            q = ""; // Clear the dependency tag
+        }
+    }
+
+    public void updateStoreBuffer(String tagName, long value) {
+        if (q.equals(tagName)) {
+            v.translateLongToWord(value); // Update the value if the tag matches
             q = ""; // Clear the dependency tag
         }
     }

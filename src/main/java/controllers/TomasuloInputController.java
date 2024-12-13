@@ -1,4 +1,5 @@
 package controllers;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import java.io.IOException;
+
 public class TomasuloInputController {
     @FXML
     private TextField cacheHitTextField;
@@ -44,6 +46,9 @@ public class TomasuloInputController {
     private TextField branchLatency;
     @FXML
     private Button start_simulation;
+
+    public static int blockSize;
+
     @FXML
     private void handleStartSimulation() {
         // Store values from the form into the mainController (or wherever necessary)
@@ -55,7 +60,7 @@ public class TomasuloInputController {
         mainController.latencyMap.putIfAbsent("div", Integer.valueOf(divLatency.getText()));
         mainController.latencyMap.putIfAbsent("hit", Integer.valueOf(cacheHitTextField.getText()));
         mainController.latencyMap.putIfAbsent("miss", Integer.valueOf(cacheMissTextField.getText()));
-        mainController.latencyMap.putIfAbsent("branch",Integer.valueOf(branchLatency.getText()));
+        mainController.latencyMap.putIfAbsent("branch", Integer.valueOf(branchLatency.getText()));
         System.out.println(mainController.latencyMap);
         mainController.initialiseObjects(
                 Integer.valueOf(floatMultRS.getText()),
@@ -64,7 +69,10 @@ public class TomasuloInputController {
                 Integer.valueOf(storeRS.getText()),
                 Integer.valueOf(blockSizeTextField.getText()),
                 Integer.valueOf(cacheSizeTextField.getText())
+
         );
+
+        blockSize = Integer.valueOf(blockSizeTextField.getText());
         // Now load the new scene
         try {
             // Load the second scene (AnotherPage.fxml)
@@ -79,6 +87,7 @@ public class TomasuloInputController {
             e.printStackTrace();
         }
     }
+
     @FXML
     public void initialize() {
         System.out.println("Controller initialized.");

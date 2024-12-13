@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 
 public class MemoryBlock {
     private final int address;
-    private final byte[] data;
+    private byte[] data;
 
     public MemoryBlock(int address, int size) {
         this.address = address;
@@ -69,5 +69,28 @@ public class MemoryBlock {
         return ByteBuffer.wrap(wordBytes).getLong(); // Convert to float
     }
 
+    public void translateFloatToWord(float value) {
+        // Convert the float value to 4 bytes
+        byte[] wordBytes = ByteBuffer.allocate(4).putFloat(value).array();
+        this.data = wordBytes;
+    }
+
+    public void translateDoubleToWord(Double value) {
+        // Convert the float value to 4 bytes
+        byte[] wordBytes = ByteBuffer.allocate(4).putDouble(value).array();
+        this.data = wordBytes;
+    }
+
+    public void translateIntToWord(int value) {
+        // Convert the float value to 4 bytes
+        byte[] wordBytes = ByteBuffer.allocate(4).putInt(value).array();
+        this.data = wordBytes;
+    }
+
+    public void translateLongToWord(Long value) {
+        // Convert the float value to 4 bytes
+        byte[] wordBytes = ByteBuffer.allocate(4).putLong(value).array();
+        this.data = wordBytes;
+    }
 
 }

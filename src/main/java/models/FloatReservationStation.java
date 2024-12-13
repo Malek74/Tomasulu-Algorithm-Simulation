@@ -2,38 +2,21 @@ package models;
 
 public class FloatReservationStation extends ReservationStation {
 
-    private float vJ;
-    private float vK;
 
     public FloatReservationStation() {
         super();
-        vJ = 0;
-        vK = 0;
     }
 
-    public void setVJ(float vJ) {
-        this.vJ = vJ;
-    }
 
-    public void setVK(float vK) {
-        this.vK = vK;
-    }
+  
 
-    public float getVJ() {
-        return vJ;
-    }
-
-    public float getVK() {
-        return vK;
-    }
 
     public void clearReservationStation() {
         super.clearReservationStation();
-        vJ = 0;
-        vK = 0;
+    
     }
 
-    public void updateReservationStation(String tagName, float value) {
+    public void updateReservationStation(String tagName, MemoryBlock value) {
         if (qJ.equals(tagName)) {
             vJ = value;
             qJ = "";

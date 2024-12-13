@@ -2,6 +2,8 @@ package models;
 
 import java.util.ArrayList;
 
+import controllers.TomasuloInputController;
+
 public class StoreBuffer {
     private ArrayList<StoreBufferEntry> buffer;
 
@@ -27,12 +29,12 @@ public class StoreBuffer {
     }
 
     // Set an entry (mark busy, set address, and manage dependencies)
-    public void setEntry(int index, int address, float v, String q) {
+    public void setEntry(int index, int address, MemoryBlock v, String q) {
         if (index >= 0 && index < buffer.size()) {
             StoreBufferEntry entry = buffer.get(index);
             entry.setBusy(true);
             entry.setAddress(address);
-            if (!Double.isNaN(v)) {
+            if (q != "") {
                 entry.setV(v); // Set value if it's ready
             } else {
                 entry.setQ(q); // Otherwise, set the dependency tag
@@ -72,7 +74,7 @@ public class StoreBuffer {
         }
     }
 
-    public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile,int time) {
+    public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile, int time) {
         // Parse the instruction
         String[] operands = instruction.getInstruction().split(" ");
         String sourceRegisterName = operands[1]; // e.g., "F4"
@@ -85,21 +87,23 @@ public class StoreBuffer {
 
                 // Handle the source register
                 Register sourceRegister = registerFile.getRegister(sourceRegisterName);
-                double valueToStore;
+                MemoryBlock valueToStore = null;
 
                 String producingTag;
-                entry.timeLeft=time;
+                entry.timeLeft = time;
 
                 if (sourceRegister.getQi().equals("0")) {
-                    valueToStore = sourceRegister.getValue(); // Value is ready
-                    producingTag = null; // No dependency
+
+                    valueToStore = sourceRegister.getMemoryBlock(); // Value is ready
+                    producingTag = ""; // No dependency
 
                 } else {
-                    valueToStore = Double.NaN;
                     producingTag = sourceRegister.getQi();
                 }
+
+                setEntry(i, effectiveAddress, valueToStore, producingTag);
+
                 // Set the store buffer entry
-                setEntry(i, effectiveAddress, (float) valueToStore, producingTag);
                 // Update the instruction's status
                 instruction.setStatus("Issued to StoreBuffer");
                 return true; // Successfully issued

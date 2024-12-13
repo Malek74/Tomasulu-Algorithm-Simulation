@@ -1,17 +1,19 @@
 package models;
 
+import controllers.TomasuloInputController;
+
 public class Register {
 	private String name; // esm el register
 	private String Qi;
-	private float value;
+	private MemoryBlock value;
 
 	public Register(String name) {
 		this.name = name;
 		this.Qi = "";
-		this.value = 0;
+		this.value = new MemoryBlock(TomasuloInputController.blockSize);
 	}
 
-	public Register(String name, float value, String Qi) {
+	public Register(String name, MemoryBlock value, String Qi) {
 		this.name = name;
 		this.Qi = Qi;
 		this.value = value;
@@ -30,10 +32,14 @@ public class Register {
 	}
 
 	public float getValue() {
+		return value.translateWordToFloat();
+	}
+
+	public MemoryBlock getMemoryBlock() {
 		return value;
 	}
 
-	public void setValue(float value) {
+	public void setValue(MemoryBlock value) {
 		this.value = value;
 	}
 
@@ -42,7 +48,7 @@ public class Register {
 		return "Register: " + name + ", Qi: " + (Qi == null ? " " : Qi) + ", Value: " + value;
 	}
 
-	public void updateRegister(String tag, float value) {
+	public void updateRegister(String tag, MemoryBlock value) {
 		if (Qi.equals(tag)) {
 			this.value = value;
 			this.Qi = "0";

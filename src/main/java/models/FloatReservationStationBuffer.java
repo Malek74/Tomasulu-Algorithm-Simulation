@@ -44,7 +44,7 @@ public class FloatReservationStationBuffer {
                         register = registerFile.getRegister(operands[2]);
 
                         if (register.getQi().equals("0")) {
-                            floatAddRS[i].setVJ(register.getValue());
+                            floatAddRS[i].setVJ(register.getMemoryBlock());
                             floatAddRS[i].setReady(true);
                         } else {
                             floatAddRS[i].setQJ(register.getQi());
@@ -56,7 +56,7 @@ public class FloatReservationStationBuffer {
 
                         // todo:el default ehh neseet
                         if (register.getQi().equals("0")) {
-                            floatAddRS[i].setVK(register.getValue());
+                            floatAddRS[i].setVK(register.getMemoryBlock());
                         } else {
                             floatAddRS[i].setQK(register.getQi());
                             floatAddRS[i].setReady(false);
@@ -83,7 +83,7 @@ public class FloatReservationStationBuffer {
 
                         // todo:el default ehh neseet
                         if (register.getQi().equals("0")) {
-                            floatMultRS[i].setVJ(register.getValue());
+                            floatMultRS[i].setVJ(register.getMemoryBlock());
                             floatMultRS[i].setReady(true);
                         } else {
                             floatMultRS[i].setQJ(register.getQi());
@@ -94,7 +94,7 @@ public class FloatReservationStationBuffer {
                         register = registerFile.getRegister(operands[3]);
 
                         if (register.getQi().equals("0")) {
-                            floatMultRS[i].setVK(register.getValue());
+                            floatMultRS[i].setVK(register.getMemoryBlock());
 
                         } else {
                             floatMultRS[i].setQK(register.getQi());
@@ -123,7 +123,7 @@ public class FloatReservationStationBuffer {
 
                         // todo:el default ehh neseet
                         if (register.getQi().equals("0")) {
-                            floatAddRS[i].setVJ(register.getValue());
+                            floatAddRS[i].setVJ(register.getMemoryBlock());
                             floatAddRS[i].setReady(true);
                         } else {
                             floatAddRS[i].setQJ(register.getQi());
@@ -135,7 +135,7 @@ public class FloatReservationStationBuffer {
 
                         // todo:el default ehh neseet
                         if (register.getQi().equals("0")) {
-                            floatAddRS[i].setVK(register.getValue());
+                            floatAddRS[i].setVK(register.getMemoryBlock());
 
                         } else {
                             floatAddRS[i].setQK(register.getQi());
@@ -163,7 +163,7 @@ public class FloatReservationStationBuffer {
 
                         // todo:el default ehh neseet
                         if (register.getQi().equals("0")) {
-                            floatMultRS[i].setVJ(register.getValue());
+                            floatMultRS[i].setVJ(register.getMemoryBlock());
                             floatMultRS[i].setReady(true);
                         } else {
                             floatMultRS[i].setQJ(register.getQi());
@@ -175,7 +175,7 @@ public class FloatReservationStationBuffer {
 
                         // todo:el default ehh neseet
                         if (register.getQi().equals("0")) {
-                            floatMultRS[i].setVK(register.getValue());
+                            floatMultRS[i].setVK(register.getMemoryBlock());
                         } else {
                             floatMultRS[i].setQK(register.getQi());
                             floatMultRS[i].setReady(false);
@@ -221,7 +221,7 @@ public class FloatReservationStationBuffer {
     public void writeBack(String tagName) {
         int index = Integer.parseInt( tagName.charAt(2)+"") ;
 
-        float value = 0;
+        MemoryBlock value = 0;
 
         if (tagName.contains("MF")) {
 

@@ -1,6 +1,8 @@
 package models;
 
+import controllers.TomasuloInputController;
 import controllers.mainController;
+import javafx.css.Size;
 
 public class ReservationStation {
     public String tagName;
@@ -10,6 +12,8 @@ public class ReservationStation {
     String qK;
     int timeLeft;
     boolean isReady;
+    MemoryBlock vJ;
+    MemoryBlock vK;
 
     public ReservationStation() {
         busy = false;
@@ -17,6 +21,8 @@ public class ReservationStation {
         isReady = false;
         qJ = "";
         qK = "";
+        vJ = new MemoryBlock(TomasuloInputController.blockSize);
+        vK = new MemoryBlock(TomasuloInputController.blockSize);
     }
 
     public void setTimeLeft(int timeLeft) {
@@ -31,7 +37,6 @@ public class ReservationStation {
             }
         }
 
-        
     }
 
     public void setTagName(String tagName) {
@@ -87,12 +92,31 @@ public class ReservationStation {
         isReady = ready;
     }
 
+    public void setVJ(MemoryBlock vJ) {
+        this.vJ = vJ;
+    }
+
+    public void setVK(MemoryBlock vK) {
+        this.vK = vK;
+    }
+
+    public MemoryBlock getVJ() {
+        return vJ;
+    }
+
+    public MemoryBlock getVK() {
+        return vK;
+    }
+
     public void clearReservationStation() {
         timeLeft = -1;
         busy = false;
-        operation =null;
+        operation = null;
         qJ = "";
         qK = "";
+        isReady = false;
+        vJ = new MemoryBlock(TomasuloInputController.blockSize);
+        vK = new MemoryBlock(TomasuloInputController.blockSize);
 
     }
 

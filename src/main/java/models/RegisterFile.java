@@ -12,12 +12,9 @@ public class RegisterFile {
 		registers = new Hashtable<>();
 		for (int i = 0; i <= count; i++) {
 			registers.put(prefix + i, new Register(prefix + i));
-			registers.get(prefix + i).setValue(0);
 			registers.get(prefix + i).setQi("0");
 		}
 	}
-
-
 
 	public int size() {
 		return registers.size();
@@ -39,21 +36,22 @@ public class RegisterFile {
 		}
 	}
 
-	public void updateRegister(String tag, float value, String name) {
+	public void updateRegister(String tag, MemoryBlock value, String name) {
 		for (int i = 0; i < registers.size(); i++) {
 			registers.get(name + i).updateRegister(tag, value);
 		}
 	}
 
-	public void initializeRegister(String name, float value) {
+	public void initializeRegister(String name, MemoryBlock value) {
 		Register register = registers.get(name);
+		
 		if (register != null) {
 			register.setValue(value);
 		} else {
 			System.out.println("Register " + name + " not found!");
 		}
 	}
-
+	
 	public void printRegisterFile() {
 		for (Register register : registers.values()) {
 			System.out.println(register);
