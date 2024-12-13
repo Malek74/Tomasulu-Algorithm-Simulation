@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import models.*;
+import views.CacheMemoryData;
 import views.FloatReservationStationData;
 import views.IntegerReservationStationData;
 
@@ -45,6 +46,12 @@ public class SimulationController {
     @FXML
     private TableView<Register> integerRegistersTable;
 
+    @FXML
+    private TableView<CacheMemoryData> memoryTable;
+
+    @FXML
+    private TableView<CacheMemoryData> cacheTable;
+
     private int clockCycle = 0;
 
     private ObservableList<FloatReservationStationData> floatMultRSData;
@@ -57,6 +64,9 @@ public class SimulationController {
 
     private ObservableList<Register> floatRegistersData;
     private ObservableList<Register> integerRegistersData;
+
+    private ObservableList<CacheMemoryData> memoryContent;
+    private ObservableList<CacheMemoryData> cacheDataContent;
 
     @FXML
     public void initialize() {
@@ -90,6 +100,9 @@ public class SimulationController {
         List<Register> floatData = getFloatRegistersData();
         List<Register> intData = getIntegerRegistersData();
 
+        List<CacheMemoryData> memoryData = getMemoryData();
+        List<CacheMemoryData> cacheData = getCacheData();
+
         // Clear the previous data from the ObservableLists
         floatMultRSData.clear();
         floatAddRSData.clear();
@@ -99,6 +112,8 @@ public class SimulationController {
         storeBufferData.clear();
         floatRegistersData.clear();
         integerRegistersData.clear();
+        memoryContent.clear();
+        cacheDataContent.clear();
 
         // Add the new data to the ObservableLists
         floatMultRSData.addAll(multRSData);
@@ -109,6 +124,8 @@ public class SimulationController {
         storeBufferData.addAll(storeData);
         floatRegistersData.addAll(floatData);
         integerRegistersData.addAll(intData);
+        memoryContent.addAll(memoryData);
+        cacheDataContent.addAll(cacheData);
     }
 
     @FXML
@@ -123,6 +140,8 @@ public class SimulationController {
         storeBufferData = FXCollections.observableArrayList();
         floatRegistersData = FXCollections.observableArrayList();
         integerRegistersData = FXCollections.observableArrayList();
+        memoryContent = FXCollections.observableArrayList();
+        cacheDataContent = FXCollections.observableArrayList();
 
         // Bind data to the tables
         bindFloatReservationStationTable(floatReservationStationsTable1, floatMultRSData);
@@ -133,6 +152,22 @@ public class SimulationController {
         bindStoreBuffer(storeBuffersTable, storeBufferData);
         bindFloatRegistersTable(floatRegistersTable, floatRegistersData);
         bindIntegerRegistersTable(integerRegistersTable, integerRegistersData);
+        bindMemoryTable(memoryTable, memoryContent);
+        bindMemoryTable(cacheTable, cacheDataContent);
+    }
+
+    private void bindMemoryTable(TableView<CacheMemoryData> table, ObservableList<CacheMemoryData> data) {
+        // Define columns for the table
+        TableColumn<CacheMemoryData, String> tagColumn = new TableColumn<>("Address");
+        tagColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+
+        TableColumn<CacheMemoryData, String> vjColumn = new TableColumn<>("Content");
+        vjColumn.setCellValueFactory(new PropertyValueFactory<>("content"));
+
+        table.getColumns().addAll(tagColumn, vjColumn);
+
+        table.setItems(data);
+
     }
 
     private void bindIntegerRegistersTable(TableView<Register> table, ObservableList<Register> data) {
@@ -268,6 +303,22 @@ public class SimulationController {
         // Set the data for the table
         table.setItems(data);
 
+    }
+
+    public List<CacheMemoryData> getMemoryData() {
+        List<CacheMemoryData> data = new ArrayList<>();
+        for (int i = 0; i < mainController.memory.size(); i++) {
+            data.add(new CacheMemoryData(i, mainController.memory.get(i)));
+        }
+        return data;
+    }
+
+    public List<CacheMemoryData> getCacheData() {
+        List<CacheMemoryData> data = new ArrayList<>();
+        for (int i = 0; i < mainController.cache.size(); i++) {
+            data.add(new CacheMemoryData(i, mainController.cache.get(i)));
+        }
+        return data;
     }
 
     public List<Register> getIntegerRegistersData() {

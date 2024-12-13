@@ -2,6 +2,8 @@ package models;
 
 import java.util.ArrayList;
 
+import controllers.mainController;
+
 public class StoreBuffer {
     private ArrayList<StoreBufferEntry> buffer;
 
@@ -72,7 +74,8 @@ public class StoreBuffer {
         }
     }
 
-    public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile,int time) {
+    public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile, int time,
+            String op) {
         // Parse the instruction
         String[] operands = instruction.getInstruction().split(" ");
         String sourceRegisterName = operands[1]; // e.g., "F4"
@@ -87,8 +90,10 @@ public class StoreBuffer {
                 Register sourceRegister = registerFile.getRegister(sourceRegisterName);
                 double valueToStore;
 
+                entry.setOperation(op);
+
                 String producingTag;
-                entry.timeLeft=time;
+                entry.timeLeft = time;
 
                 if (sourceRegister.getQi().equals("0")) {
                     valueToStore = sourceRegister.getValue(); // Value is ready
@@ -157,16 +162,38 @@ public class StoreBuffer {
     }
 
     public void writeEntry(String TagName) {
-        for (StoreBufferEntry storeBufferEntry : buffer) {
-            if (storeBufferEntry.getTag().equals(TagName)) {
-                storeBufferEntry.writeToMemory();
-                return;
-            }
-        }
-        return;
+        int index = Integer.parseInt(TagName.substring(1));
+
+        StoreBufferEntry entry = buffer.get(index);
+
+        // fetch value from register
+        float value = entry.getV();
+
+        int bytes = getNumOfBytes(entry.getOperation());
+        String data = MainMemory.decimalToBinary((int) value, bytes);
+
+        // Write the value to memory
+        mainController.memory.store(entry.getAddress(), data);
+
     }
 
     public ArrayList<StoreBufferEntry> getBuffer() {
         return buffer;
+    }
+
+    public int getNumOfBytes(String operation) {
+        switch (operation) {
+            case "SW":
+                return 4;
+            case "SD":
+                return 8;
+            case "S.S":
+                return 4;
+            case "S.D":
+                return 8;
+
+            default:
+                return 0;
+        }
     }
 }

@@ -35,7 +35,7 @@ public class TomasuloInputController {
     @FXML
     private TextField intAddRS;
     @FXML
-    private TextField intMultRS;
+    private TextField memorySizeField;
     @FXML
     private TextField loadRS;
     @FXML

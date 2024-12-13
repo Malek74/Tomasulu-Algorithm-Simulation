@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="900.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SimulationController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SimulationController">
    <children>
       <HBox prefHeight="54.0" prefWidth="953.0">
          <children>
@@ -141,6 +141,26 @@
                      </font>
                   </Text>
                   <TableView fx:id="integerRegistersTable" prefHeight="267.0" prefWidth="227.0" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Text fx:id="integerRegistersLabel1" fill="#fa0000" strokeType="OUTSIDE" strokeWidth="0.0" text="Memory" translateX="6.0" wrappingWidth="226.78912353515625">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Text>
+                  <TableView fx:id="memoryTable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="261.0" prefWidth="227.0" translateX="4.0" translateY="6.0" />
+               </children>
+            </VBox>
+            <VBox layoutX="963.0" layoutY="10.0" translateX="6.0">
+               <children>
+                  <Text fx:id="integerRegistersLabel11" fill="#fa0000" strokeType="OUTSIDE" strokeWidth="0.0" text="Cache" translateX="6.0" wrappingWidth="226.78912353515625">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Text>
+                  <TableView fx:id="cacheTable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="261.0" prefWidth="227.0" translateX="4.0" translateY="6.0" />
                </children>
             </VBox>
          </children>

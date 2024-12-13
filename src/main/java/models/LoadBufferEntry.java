@@ -7,13 +7,15 @@ public class LoadBufferEntry {
     private boolean busy; // Indicates if the entry is occupied
     private int address;// Holds the effective address
     private String tag;
+    private String op;
     int timeLeft;
 
     // Constructor
-    public LoadBufferEntry(String tag) {
+    public LoadBufferEntry(String tag, String op) {
         this.tag = tag;
         this.busy = false;
         this.address = -1; // -1 indicates no address stored
+        this.op = op;
     }
 
     public void execute() {
@@ -37,6 +39,14 @@ public class LoadBufferEntry {
 
     public int getAddress() {
         return address;
+    }
+
+    public void setOperation(String op) {
+        this.op = op;
+    }
+
+    public String getOperation() {
+        return op;
     }
 
     public void setAddress(int address) {
@@ -63,6 +73,6 @@ public class LoadBufferEntry {
     }
 
     public float writeBackEntry() {
-        return mainController.memory.getWordFloat(address);
+        return 0;
     }
 }

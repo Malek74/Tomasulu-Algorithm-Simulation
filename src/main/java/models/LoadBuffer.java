@@ -11,7 +11,7 @@ public class LoadBuffer {
     public LoadBuffer(int size) {
         buffer = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            buffer.add(new LoadBufferEntry("L" + i));
+            buffer.add(new LoadBufferEntry("L" + i, ""));
         }
 
     }
@@ -68,11 +68,16 @@ public class LoadBuffer {
 
     public void writeBackLoad(String tag) {
         // todo:add loading memory
-        int index = ((int) tag.charAt(2)) - 1;
+        int index = Integer.parseInt(tag.charAt(1) + "");
         LoadBufferEntry loadBufferEntry = buffer.get(index);
 
         // get the value of the tag
-        float value = loadBufferEntry.writeBackEntry();
+
+        // write into memory
+        int bytesNum = getNumOfBytes(loadBufferEntry.getOperation());
+
+        String res = mainController.memory.load(index, bytesNum);
+        float value = MainMemory.binaryToDecimal(res);
 
         // update all reservation stations that depend on this tag
         mainController.floatReservationStationBuffer.updateReservationStationBuffer(tag, value);
@@ -82,9 +87,23 @@ public class LoadBuffer {
         for (String branch : mainController.branchInstructionsBuffer.keySet()) {
             mainController.branchInstructionsBuffer.get(branch).updateDueToWriteBack(tag, value);
         }
+
+        // update all register that depend on this tag
+        mainController.registerFloat.updateRegister(tag, value, "F");
+        mainController.registerInt.updateRegister(tag, value, "R");
+
+        // write back into cache
+
+        String data = mainController.memory.load(loadBufferEntry.getAddress(), mainController.cache.getBlockSize());
+
+        mainController.cache.write(loadBufferEntry.getAddress(), data);
+
+        // clear the load buffer
+        loadBufferEntry.clear();
     }
 
-    public boolean issueInstructionLoad(Instruction instruction, operation type, RegisterFile registerFile, int time) {
+    public boolean issueInstructionLoad(Instruction instruction, operation type, RegisterFile registerFile,
+            String op) {
         // Parse the instruction
         String[] operands = instruction.getInstruction().split(" ");
         String destinationRegisterName = operands[1]; // e.g., "F4"
@@ -94,15 +113,23 @@ public class LoadBuffer {
             LoadBufferEntry entry = buffer.get(i);
             if (!entry.isBusy()) {
                 // Handle the destination register
+
                 Register destinationRegister = registerFile.getRegister(destinationRegisterName);
                 // Set the load buffer entry
                 entry.setBusy(true);
                 entry.setAddress(effectiveAddress);
+                entry.setOperation(op);
 
-                entry.timeLeft = time;
+                // check if the address in cache to set the correct latency
+                String res = mainController.cache.read(effectiveAddress, getNumOfBytes(op));
+                if (res != null) {
+                    entry.timeLeft = mainController.latencyMap.get("hit");
+                } else {
+                    entry.timeLeft = mainController.latencyMap.get("miss");
+                }
 
                 // Mark the destination register as waiting for this operation
-                destinationRegister.setQi("Load" + i); // Tag the register with the load buffer entry ID
+                destinationRegister.setQi(entry.getTag()); // Tag the register with the load buffer entry ID
                 // Update the instruction's status
                 instruction.setStatus("Issued to LoadBuffer");
                 return true; // Successfully issued
@@ -168,5 +195,21 @@ public class LoadBuffer {
         loadBuffer.setEntry(0, 600); // Set address 600 in the first entry
         loadBuffer.setEntry(2, 700); // Set address 700 in the third entry
         loadBuffer.printBuffer();
+    }
+
+    public int getNumOfBytes(String operation) {
+        switch (operation) {
+            case "LW":
+                return 4;
+            case "L.D":
+                return 8;
+            case "L.S":
+                return 4;
+            case "LD":
+                return 8;
+            default:
+                return 0;
+        }
+
     }
 }

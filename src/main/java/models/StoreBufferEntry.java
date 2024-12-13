@@ -9,6 +9,7 @@ public class StoreBufferEntry {
     private float v; // Value to store (if ready)
     private String q; // Tag of the producing reservation station or functional unit (if not ready)
     int timeLeft;
+    private String operation;
 
     // Constructor: Initialize entry as empty
     public StoreBufferEntry(String tag) {
@@ -25,6 +26,14 @@ public class StoreBufferEntry {
         this.address = 0;
         this.v = Float.NaN; // NaN indicates value is not ready
         this.q = ""; // Null indicates no dependency
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getOperation() {
+        return operation;
     }
 
     public void execute() {
@@ -102,11 +111,6 @@ public class StoreBufferEntry {
                 ", Address: " + address +
                 ", V: " + (Double.isNaN(v) ? "Not Ready" : v) +
                 ", Q: " + (q == null ? "None" : q);
-    }
-
-    public void writeToMemory() {
-        mainController.memory.writeWordToMemory(address, v);
-        this.clear();
     }
 
 }
