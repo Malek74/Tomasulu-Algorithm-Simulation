@@ -48,7 +48,7 @@ public class MainMemory {
         }
         return result;
     }
-    
+
     public float translateWordToFloat(int address) {
         // Ensure we're reading exactly 4 bytes (size of a float)
         byte[] wordBytes = readFromMemory(address, 4); // Fetch the 4 bytes
@@ -65,5 +65,11 @@ public class MainMemory {
 
         // Write the bytes to memory, starting at the specified address
         writeBytes(address, wordBytes);
+
+    }
+
+
+    public void writeBlockToMemory(int address, MemoryBlock block) {
+        writeBytes(address, block.getData());
     }
 }

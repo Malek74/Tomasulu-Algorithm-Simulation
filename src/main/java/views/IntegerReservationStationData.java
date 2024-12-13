@@ -3,14 +3,14 @@ package views;
 public class IntegerReservationStationData {
     private String tag;
     private String operation;
-    private int VJ;
-    private int VK;
+    private long VJ;
+    private long VK;
     private String QJ;
     private String QK;
     private boolean busy;
 
     // Constructor
-    public IntegerReservationStationData(String tag, String operation, int VJ, int VK, String QJ, String QK, boolean ready) {
+    public IntegerReservationStationData(String tag, String operation, long VJ,long VK, String QJ, String QK, boolean ready) {
         this.tag = tag;
         this.operation = operation;
         this.VJ = VJ;

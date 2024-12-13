@@ -9,6 +9,8 @@ import javafx.scene.text.Text;
 import models.*;
 import views.FloatReservationStationData;
 import views.IntegerReservationStationData;
+import views.floatRegisterData;
+import views.intRegisterData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,10 +42,10 @@ public class SimulationController {
     private TableView<StoreBufferEntry> storeBuffersTable;
 
     @FXML
-    private TableView<Register> floatRegistersTable;
+    private TableView<floatRegisterData> floatRegistersTable;
 
     @FXML
-    private TableView<Register> integerRegistersTable;
+    private TableView<intRegisterData> integerRegistersTable;
 
     private int clockCycle = 0;
 
@@ -55,8 +57,8 @@ public class SimulationController {
     private ObservableList<LoadBufferEntry> loadBufferData;
     private ObservableList<StoreBufferEntry> storeBufferData;
 
-    private ObservableList<Register> floatRegistersData;
-    private ObservableList<Register> integerRegistersData;
+    private ObservableList<floatRegisterData> floatRegistersData;
+    private ObservableList<intRegisterData> integerRegistersData;
 
     @FXML
     public void initialize() {
@@ -87,8 +89,8 @@ public class SimulationController {
         List<LoadBufferEntry> loadData = getLoadBufferEntry();
         List<StoreBufferEntry> storeData = mainController.storeBuffer.getBuffer();
 
-        List<Register> floatData = getFloatRegistersData();
-        List<Register> intData = getIntegerRegistersData();
+        List<floatRegisterData> floatData = getFloatRegistersData();
+        List<intRegisterData> intData = getIntegerRegistersData();
 
         // Clear the previous data from the ObservableLists
         floatMultRSData.clear();
@@ -135,15 +137,15 @@ public class SimulationController {
         bindIntegerRegistersTable(integerRegistersTable, integerRegistersData);
     }
 
-    private void bindIntegerRegistersTable(TableView<Register> table, ObservableList<Register> data) {
+    private void bindIntegerRegistersTable(TableView<intRegisterData> table, ObservableList<intRegisterData> data) {
         // Define columns for the table
-        TableColumn<Register, String> tagColumn = new TableColumn<>("Name");
+        TableColumn<intRegisterData, String> tagColumn = new TableColumn<>("Name");
         tagColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        TableColumn<Register, String> vjColumn = new TableColumn<>("Value");
+        TableColumn<intRegisterData, String> vjColumn = new TableColumn<>("Value");
         vjColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
 
-        TableColumn<Register, String> operationColumn = new TableColumn<>("Qi");
+        TableColumn<intRegisterData, String> operationColumn = new TableColumn<>("Qi");
         operationColumn.setCellValueFactory(new PropertyValueFactory<>("qi"));
 
         table.getColumns().addAll(tagColumn, vjColumn, operationColumn);
@@ -152,15 +154,15 @@ public class SimulationController {
         table.setItems(data);
     }
 
-    private void bindFloatRegistersTable(TableView<Register> table, ObservableList<Register> data) {
+    private void bindFloatRegistersTable(TableView<floatRegisterData> table, ObservableList<floatRegisterData> data) {
         // Define columns for the table
-        TableColumn<Register, String> tagColumn = new TableColumn<>("Name");
+        TableColumn<floatRegisterData, String> tagColumn = new TableColumn<>("Name");
         tagColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        TableColumn<Register, String> vjColumn = new TableColumn<>("Value");
+        TableColumn<floatRegisterData, String> vjColumn = new TableColumn<>("Value");
         vjColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
 
-        TableColumn<Register, String> operationColumn = new TableColumn<>("Qi");
+        TableColumn<floatRegisterData, String> operationColumn = new TableColumn<>("Qi");
         operationColumn.setCellValueFactory(new PropertyValueFactory<>("qi"));
 
         table.getColumns().addAll(tagColumn, vjColumn, operationColumn);
@@ -270,20 +272,20 @@ public class SimulationController {
 
     }
 
-    public List<Register> getIntegerRegistersData() {
-        List<Register> data = new ArrayList<>();
+    public List<intRegisterData> getIntegerRegistersData() {
+        List<intRegisterData> data = new ArrayList<>();
         for (int i = 0; i < mainController.registerInt.size(); i++) {
             Register r = mainController.registerInt.getRegister("R" + i);
-            data.add(new Register("R" + i, r.getValue(), r.getQi()));
+            data.add(new intRegisterData("R" + i, r.getMemoryBlock().translateWordToLong(), r.getQi()));
         }
         return data;
     }
 
-    public List<Register> getFloatRegistersData() {
-        List<Register> data = new ArrayList<>();
+    public List<floatRegisterData> getFloatRegistersData() {
+        List<floatRegisterData> data = new ArrayList<>();
         for (int i = 0; i < mainController.registerFloat.size(); i++) {
             Register r = mainController.registerFloat.getRegister("F" + i);
-            data.add(new Register("F" + i, r.getValue(), r.getQi()));
+            data.add(new floatRegisterData("F" + i, r.getMemoryBlock().translateWordToDouble(), r.getQi()));
         }
         return data;
     }
@@ -295,8 +297,8 @@ public class SimulationController {
         for (FloatReservationStation rs : mainController.floatReservationStationBuffer.getFloatMultRS()) {
             String tagName = rs.getTagName() != null ? rs.getTagName() : "N/A";
             String operation = rs.getOperation() != null ? rs.getOperation().toString() : "N/A";
-            float vj = rs.getVJ() != 0 ? rs.getVJ() : 0.0f;
-            float vk = rs.getVK() != 0 ? rs.getVK() : 0.0f;
+            double vj = rs.getVJ().translateWordToDouble() != 0 ? rs.getVJ().translateWordToDouble() : 0.0f;
+            double vk = rs.getVK().translateWordToDouble() != 0 ? rs.getVK().translateWordToDouble() : 0.0f;
             String qj = rs.getQJ() != null ? rs.getQJ() : "N/A";
             String qk = rs.getQK() != null ? rs.getQK() : "N/A";
             boolean ready = rs.isBusy();
@@ -313,8 +315,8 @@ public class SimulationController {
         for (FloatReservationStation rs : mainController.floatReservationStationBuffer.getFloatAddRS()) {
             String tagName = rs.getTagName() != null ? rs.getTagName() : "N/A";
             String operation = rs.getOperation() != null ? rs.getOperation().toString() : "N/A";
-            float vj = rs.getVJ() != 0 ? rs.getVJ() : 0.0f;
-            float vk = rs.getVK() != 0 ? rs.getVK() : 0.0f;
+            double vj = rs.getVJ().translateWordToDouble() != 0 ? rs.getVJ().translateWordToDouble() : 0.0f;
+            double vk = rs.getVK().translateWordToDouble() != 0 ? rs.getVK().translateWordToDouble() : 0.0f;
             String qj = rs.getQJ() != null ? rs.getQJ() : "N/A";
             String qk = rs.getQK() != null ? rs.getQK() : "N/A";
             boolean ready = rs.isBusy();
@@ -329,8 +331,8 @@ public class SimulationController {
         for (IntegerReservationStation rs : mainController.integerReservationStationBuffer.getIntMultRS()) {
             String tagName = rs.getTagName() != null ? rs.getTagName() : "N/A";
             String operation = rs.getOperation() != null ? rs.getOperation().toString() : "N/A";
-            int vj = rs.getVJ() != 0 ? rs.getVJ() : 0;
-            int vk = rs.getVK() != 0 ? rs.getVK() : 0;
+            long vj = rs.getVJ().translateWordToLong() != 0 ? rs.getVJ().translateWordToLong() : 0;
+            long vk = rs.getVK().translateWordToLong() != 0 ? rs.getVK().translateWordToLong() : 0;
             String qj = rs.getQJ() != null ? rs.getQJ() : "N/A";
             String qk = rs.getQK() != null ? rs.getQK() : "N/A";
             boolean ready = rs.isBusy();
@@ -345,8 +347,8 @@ public class SimulationController {
         for (IntegerReservationStation rs : mainController.integerReservationStationBuffer.getIntAddRS()) {
             String tagName = rs.getTagName() != null ? rs.getTagName() : "N/A";
             String operation = rs.getOperation() != null ? rs.getOperation().toString() : "N/A";
-            int vj = rs.getVJ() != 0 ? rs.getVJ() : 0;
-            int vk = rs.getVK() != 0 ? rs.getVK() : 0;
+            long vj = rs.getVJ().translateWordToLong() != 0 ? rs.getVJ().translateWordToLong() : 0;
+            long vk = rs.getVK().translateWordToLong() != 0 ? rs.getVK().translateWordToLong() : 0;
             String qj = rs.getQJ() != null ? rs.getQJ() : "N/A";
             String qk = rs.getQK() != null ? rs.getQK() : "N/A";
             boolean ready = rs.isBusy();

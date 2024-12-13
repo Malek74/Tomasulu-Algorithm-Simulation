@@ -60,7 +60,7 @@ public class StoreBuffer {
         }
     }
 
-    public void updateStoreBuffer(String tag, float value) {
+    public void updateStoreBuffer(String tag, MemoryBlock value) {
         // Update all store buffer entries that depend on this tag
         for (int i = 0; i < buffer.size(); i++) {
             buffer.get(i).updateStoreBuffer(tag, value);

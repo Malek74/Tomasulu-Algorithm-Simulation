@@ -1,5 +1,6 @@
 package models;
 
+import controllers.TomasuloInputController;
 import controllers.mainController;
 import models.FloatReservationStation;
 import models.Instruction;
@@ -24,7 +25,7 @@ public class FloatReservationStationBuffer {
         }
     }
 
-    public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile,int time) {
+    public boolean issueInstruction(Instruction instruction, operation type, RegisterFile registerFile, int time) {
 
         // split the instruction
         String[] operands = instruction.getInstruction().split(" ");
@@ -37,8 +38,7 @@ public class FloatReservationStationBuffer {
 
                         floatAddRS[i].setBusy(true);
                         floatAddRS[i].setOperation(type);
-                        floatAddRS[i].timeLeft=time;
-
+                        floatAddRS[i].timeLeft = time;
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[2]);
@@ -75,8 +75,7 @@ public class FloatReservationStationBuffer {
                     if (!floatMultRS[i].isBusy()) {
                         floatMultRS[i].setBusy(true);
                         floatMultRS[i].setOperation(type);
-                        floatMultRS[i].timeLeft=time;
-
+                        floatMultRS[i].timeLeft = time;
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[2]);
@@ -115,8 +114,7 @@ public class FloatReservationStationBuffer {
 
                         floatAddRS[i].setBusy(true);
                         floatAddRS[i].setOperation(type);
-                        floatAddRS[i].timeLeft=time;
-
+                        floatAddRS[i].timeLeft = time;
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[2]);
@@ -155,8 +153,7 @@ public class FloatReservationStationBuffer {
                     if (!floatMultRS[i].isBusy()) {
                         floatMultRS[i].setBusy(true);
                         floatMultRS[i].setOperation(type);
-                        floatMultRS[i].timeLeft=time;
-
+                        floatMultRS[i].timeLeft = time;
 
                         // check first operand in register file
                         register = registerFile.getRegister(operands[2]);
@@ -219,27 +216,52 @@ public class FloatReservationStationBuffer {
     }
 
     public void writeBack(String tagName) {
-        int index = Integer.parseInt( tagName.charAt(2)+"") ;
+        int index = Integer.parseInt(tagName.charAt(2) + "");
 
-        MemoryBlock value = 0;
+        MemoryBlock value = new MemoryBlock(TomasuloInputController.blockSize);
 
         if (tagName.contains("MF")) {
 
-            String op= String.valueOf(floatMultRS[index].getOperation());
-            if(op.equals("MULT")){
-            value = (float) (floatMultRS[index].getVJ() * floatMultRS[index].getVK());}
-            if(op.equals("DIV")){
-                value=(float) (floatMultRS[index].getVJ() / floatMultRS[index].getVK());
+            String op = String.valueOf(floatMultRS[index].getOperation());
+            if (op.equals("MUL_D")) {
+                value.translateDoubleToWord(floatMultRS[index].getVJ().translateWordToDouble()
+                        * floatMultRS[index].getVK().translateWordToDouble());
+            }
+            if (op.equals("MUL_S")) {
+                value.translateFloatToWord(floatMultRS[index].getVJ().translateWordToFloat()
+                        * floatMultRS[index].getVK().translateWordToFloat());
+            }
+            if (op.equals("DIV_S")) {
+                value.translateFloatToWord(floatMultRS[index].getVJ().translateWordToFloat()
+                        / floatMultRS[index].getVK().translateWordToFloat());
+            }
+            if (op.equals("DIV_D")) {
+                value.translateDoubleToWord(floatMultRS[index].getVJ().translateWordToDouble()
+                        / floatMultRS[index].getVK().translateWordToDouble());
             }
 
             floatMultRS[index].clearReservationStation();
-        } else if (tagName.contains("AF")) {
-            String op= String.valueOf(floatMultRS[index].getOperation());
-            if(op.equals("ADD")){
-                value = (float) (floatMultRS[index].getVJ() + floatMultRS[index].getVK());}
-            if(op.equals("SUB")){
-                value=(float) (floatMultRS[index].getVJ() - floatMultRS[index].getVK());
+        } else if (tagName.contains("AF"))
+
+        {
+            String op = String.valueOf(floatMultRS[index].getOperation());
+            if (op.equals("ADD_D")) {
+                value.translateDoubleToWord(floatMultRS[index].getVJ().translateWordToDouble()
+                        + floatMultRS[index].getVK().translateWordToDouble());
             }
+            if (op.equals("ADD_S")) {
+                value.translateFloatToWord(floatMultRS[index].getVJ().translateWordToFloat()
+                        + floatMultRS[index].getVK().translateWordToFloat());
+            }
+            if (op.equals("SUB_S")) {
+                value.translateFloatToWord(floatMultRS[index].getVJ().translateWordToFloat()
+                        - floatMultRS[index].getVK().translateWordToFloat());
+            }
+            if (op.equals("SUB_D")) {
+                value.translateDoubleToWord(floatMultRS[index].getVJ().translateWordToDouble()
+                        - floatMultRS[index].getVK().translateWordToDouble());
+            }
+
             floatAddRS[index].clearReservationStation();
         }
 
@@ -260,7 +282,7 @@ public class FloatReservationStationBuffer {
 
     }
 
-    public void updateReservationStationBuffer(String tag, float value) {
+    public void updateReservationStationBuffer(String tag, MemoryBlock value) {
 
         // update all reservation stations that depend on this tag
         for (int i = 0; i < floatMultRS.length; i++) {

@@ -6,8 +6,8 @@ public class BranchInstruction {
     private String tag;
     private String operation;
     private int destination;
-    private float source1;
-    private float source2;
+    private MemoryBlock source1;
+    private MemoryBlock source2;
     private String qJ;
     private String qK;
     private int timeLeft;
@@ -37,20 +37,20 @@ public class BranchInstruction {
         }
 
         if (source1Register.getQi() == null || source1Register.getQi().equals("")) {
-            this.source1 = source1Register.getValue();
+            this.source1 = source1Register.getMemoryBlock();
         } else {
             this.qJ = source1Register.getQi();
         }
 
         if (source2Register.getQi() == null || source2Register.getQi().equals("")) {
-            this.source2 = source2Register.getValue();
+            this.source2 = source2Register.getMemoryBlock();
         } else {
             this.qK = source2Register.getQi();
         }
         return qJ.equals("") && qK.equals("");
     }
 
-    public void updateDueToWriteBack(String tag, float value) {
+    public void updateDueToWriteBack(String tag, MemoryBlock value) {
         if (tag.equals(qJ)) {
             source1 = value;
             qJ = "";
@@ -99,19 +99,19 @@ public class BranchInstruction {
         this.destination = destination;
     }
 
-    public float getSource1() {
+    public MemoryBlock getSource1() {
         return source1;
     }
 
-    public void setSource1(float source1) {
+    public void setSource1(MemoryBlock source1) {
         this.source1 = source1;
     }
 
-    public float getSource2() {
+    public MemoryBlock getSource2() {
         return source2;
     }
 
-    public void setSource2(float source2) {
+    public void setSource2(MemoryBlock source2) {
         this.source2 = source2;
     }
 

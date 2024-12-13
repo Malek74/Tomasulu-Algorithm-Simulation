@@ -110,9 +110,9 @@ public class StoreBufferEntry {
         this.q = "";
     }
 
-    public void updateStoreBuffer(String tagName, float value) {
+    public void updateStoreBuffer(String tagName, MemoryBlock value) {
         if (q.equals(tagName)) {
-            v.translateFloatToWord(value); // Update the value if the tag matches
+            v = value; // Update the value if the tag matches
             q = ""; // Clear the dependency tag
         }
     }
@@ -139,16 +139,16 @@ public class StoreBufferEntry {
     }
 
     // String representation for debugging
-    @Override
-    public String toString() {
-        return "Busy: " + busy +
-                ", Address: " + address +
-                ", V: " + (Double.isNaN(v) ? "Not Ready" : v) +
-                ", Q: " + (q == null ? "None" : q);
-    }
+    // @Override
+    // public String toString() {
+    // return "Busy: " + busy +
+    // ", Address: " + address +
+    // ", V: " + (Double.isNaN(v) ? "Not Ready" : v) +
+    // ", Q: " + (q == null ? "None" : q);
+    // }
 
     public void writeToMemory() {
-        mainController.memory.writeWordToMemory(address, v);
+        mainController.memory.writeBlockToMemory(address, v);
         this.clear();
     }
 

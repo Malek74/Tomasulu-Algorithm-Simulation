@@ -3,14 +3,14 @@ package views;
 public class FloatReservationStationData {
     private String tag;
     private String operation;
-    private float VJ;
-    private float VK;
+    private double VJ;
+    private double VK;
     private String QJ;
     private String QK;
     private boolean busy;
 
     // Constructor
-    public FloatReservationStationData(String tag, String operation, float VJ, float VK, String QJ, String QK, boolean ready) {
+    public FloatReservationStationData(String tag, String operation, double VJ, double VK, String QJ, String QK, boolean ready) {
         this.tag = tag;
         this.operation = operation;
         this.VJ = VJ;
@@ -29,11 +29,11 @@ public class FloatReservationStationData {
         return operation;
     }
 
-    public float getVJ() {
+    public double getVJ() {
         return VJ;
     }
 
-    public float getVK() {
+    public double getVK() {
         return VK;
     }
 

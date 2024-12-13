@@ -13,7 +13,7 @@ public class Cache {
         this.capacity = capacity;
         this.cache = new LinkedHashMap<>(capacity, 0.75f, true) {
             @Override
-            protected boolean removeEldestEntry(Map.Entry<Integer, byte[]> eldest) {
+             protected boolean removeEldestEntry(Map.Entry<Integer, byte[]> eldest) {
 //                System.out.println("removed LRU");
                 return size() > capacity;
             }

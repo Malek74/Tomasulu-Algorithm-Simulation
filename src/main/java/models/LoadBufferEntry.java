@@ -62,7 +62,7 @@ public class LoadBufferEntry {
         return "[Busy=" + busy + ", Address=" + (address == -1 ? "None" : address) + "]";
     }
 
-    public float writeBackEntry() {
-        return mainController.memory.getWordFloat(address);
+    public MemoryBlock writeBackEntry() {
+        return mainController.memory.getBlock(address);
     }
 }

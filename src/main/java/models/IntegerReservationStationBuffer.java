@@ -1,5 +1,6 @@
 package models;
 
+import controllers.TomasuloInputController;
 import controllers.mainController;
 
 public class IntegerReservationStationBuffer {
@@ -24,30 +25,39 @@ public class IntegerReservationStationBuffer {
     public void writeBack(String tag) {
 
         int index = Integer.parseInt(tag.charAt(2) + "");
-        int value = 0;
+        MemoryBlock value = new MemoryBlock(TomasuloInputController.blockSize);
 
         // get the value of the tag
         if (tag.contains("MR")) {
             String op = intMultRS[index].operation.toString();
-            if (op.equals("MULT")) {
-                value = intMultRS[index].getVJ() * intMultRS[index].getVK();
-            } else if (op.equals("DIV")) {
-                value = intMultRS[index].getVJ() / intMultRS[index].getVK();
+            if (op.equals("MUL_D")) {
+                value.translateLongToWord(intMultRS[index].getVJ().translateWordToLong()
+                        * intMultRS[index].getVK().translateWordToLong());
+            }
+            if (op.equals("MULT_S")) {
+                value.translateIntToWord(intMultRS[index].getVJ().translateWordToInt()
+                        * intMultRS[index].getVK().translateWordToInt());
+            }
+            if (op.equals("DIV_D")) {
+                value.translateLongToWord(intMultRS[index].getVJ().translateWordToLong()
+                        / intMultRS[index].getVK().translateWordToLong());
+            }
+            if (op.equals("DIV_S")) {
+                value.translateIntToWord(intMultRS[index].getVJ().translateWordToInt()
+                        / intMultRS[index].getVK().translateWordToInt());
             }
             intMultRS[index].clearReservationStation();
 
         } else if (tag.contains("AR")) {
             String op = intAddRS[index].operation.toString();
-            if (op.equals("ADD")) {
-                value = intAddRS[index].getVJ() + intAddRS[index].getVK();
-            } else if (op.equals("SUB")) {
-                value = intAddRS[index].getVJ() - intAddRS[index].getVK();
-            } else if (op.equals("DADDI")) {
-                value = intAddRS[index].getVJ() + intAddRS[index].getVK();
-            } else if (op.equals("DSUBI")) {
-                value = intAddRS[index].getVJ() - intAddRS[index].getVK();
+            if (op.equals("DADDI")) {
+                value.translateLongToWord(intAddRS[index].getVJ().translateWordToLong()
+                        + intAddRS[index].getVK().translateWordToLong());
             }
-
+            if (op.equals("DSUBI")) {
+                value.translateLongToWord(intAddRS[index].getVJ().translateWordToLong()
+                        - intAddRS[index].getVK().translateWordToLong());
+            }
             intAddRS[index].clearReservationStation();
         }
 
@@ -57,7 +67,7 @@ public class IntegerReservationStationBuffer {
         mainController.storeBuffer.updateStoreBuffer(tag, value);
 
         // todo:update all register files that depend on this tag
-        mainController.registerFloat.updateRegister(tag, (float) (value), "F");
+        mainController.registerFloat.updateRegister(tag, (value), "F");
         mainController.registerInt.updateRegister(tag, value, "R");
 
         // update all branches that depend on tag
@@ -67,7 +77,7 @@ public class IntegerReservationStationBuffer {
 
     }
 
-    public void updateReservationStation(String tag, int value) {
+    public void updateReservationStation(String tag, MemoryBlock value) {
 
         // update all reservation stations that depend on this tag
         for (int i = 0; i < intAddRS.length; i++) {
@@ -99,7 +109,7 @@ public class IntegerReservationStationBuffer {
                         register = registerFile.getRegister(operands[2]);
 
                         if (register.getQi().equals("0")) {
-                            intAddRS[i].setvJ((int) register.getValue());
+                            intAddRS[i].setVJ(register.getMemoryBlock());
                             intAddRS[i].setReady(true);
                         } else {
                             intAddRS[i].setQJ(register.getQi());
@@ -111,7 +121,7 @@ public class IntegerReservationStationBuffer {
 
                         // todo:el default ehh neseet
                         if (register.getQi().equals("0")) {
-                            intAddRS[i].setvK((int) register.getValue());
+                            intAddRS[i].setVK(register.getMemoryBlock());
                         } else {
                             intAddRS[i].setQK(register.getQi());
                             intAddRS[i].setReady(false);
@@ -138,7 +148,7 @@ public class IntegerReservationStationBuffer {
                         register = registerFile.getRegister(operands[2]);
 
                         if (register.getQi().equals("0")) {
-                            intAddRS[i].setvJ((int) register.getValue());
+                            intAddRS[i].setVJ(register.getMemoryBlock());
                             intAddRS[i].setReady(true);
                         } else {
                             intAddRS[i].setQJ(register.getQi());
@@ -148,7 +158,9 @@ public class IntegerReservationStationBuffer {
                         // check second operand in register file
 
                         // todo:el default ehh neseet
-                        intAddRS[i].setvK(Integer.parseInt(operands[3]));
+                        MemoryBlock value = new MemoryBlock(TomasuloInputController.blockSize);
+                        value.translateLongToWord(Long.valueOf(operands[3]));
+                        intAddRS[i].setVK(value);
 
                         registerFile.updateRegisterDuetoIssue(operands[1], intAddRS[i].getTagName());
                         return true;
@@ -169,7 +181,7 @@ public class IntegerReservationStationBuffer {
                         register = registerFile.getRegister(operands[2]);
 
                         if (register.getQi().equals("0")) {
-                            intAddRS[i].setvJ((int) register.getValue());
+                            intAddRS[i].setVJ(register.getMemoryBlock());
                             intAddRS[i].setReady(true);
                         } else {
                             intAddRS[i].setQJ(register.getQi());
@@ -179,8 +191,10 @@ public class IntegerReservationStationBuffer {
                         // check second operand in register file
 
                         // todo:el default ehh neseet
-                        intAddRS[i].setvK(Integer.parseInt(operands[3]));
 
+                        MemoryBlock value = new MemoryBlock(TomasuloInputController.blockSize);
+                        value.translateLongToWord(Long.valueOf(operands[3]));
+                        intAddRS[i].setVK(value);
                         // set the destination register
                         registerFile.updateRegisterDuetoIssue(operands[1], intAddRS[i].getTagName());
 
@@ -200,7 +214,7 @@ public class IntegerReservationStationBuffer {
                         register = registerFile.getRegister(operands[1]);
 
                         if (register.getQi().equals("0")) {
-                            intMultRS[i].setvJ((int) register.getValue());
+                            intMultRS[i].setVJ(register.getMemoryBlock());
                             intMultRS[i].setReady(true);
                         } else {
                             intMultRS[i].setQJ(register.getQi());
@@ -211,7 +225,7 @@ public class IntegerReservationStationBuffer {
                         register = registerFile.getRegister(operands[2]);
 
                         if (register.getQi().equals("")) {
-                            intMultRS[i].setvK((int) register.getValue());
+                            intMultRS[i].setVK(register.getMemoryBlock());
                         } else {
                             intMultRS[i].setQK(register.getQi());
                             intMultRS[i].setReady(false);
@@ -235,7 +249,7 @@ public class IntegerReservationStationBuffer {
                         register = registerFile.getRegister(operands[1]);
 
                         if (register.getQi().equals("0")) {
-                            intAddRS[i].setvJ((int) register.getValue());
+                            intAddRS[i].setVJ(register.getMemoryBlock());
                             intAddRS[i].setReady(true);
                         } else {
                             intAddRS[i].setQJ(register.getQi());
@@ -246,7 +260,7 @@ public class IntegerReservationStationBuffer {
                         register = registerFile.getRegister(operands[2]);
 
                         if (register.getQi().equals("0")) {
-                            intAddRS[i].setvK((int) register.getValue());
+                            intAddRS[i].setVK(register.getMemoryBlock());
                             intAddRS[i].setReady(true);
                         } else {
                             intAddRS[i].setQK(register.getQi());
@@ -270,7 +284,7 @@ public class IntegerReservationStationBuffer {
                         register = registerFile.getRegister(operands[1]);
 
                         if (register.getQi().equals("0")) {
-                            intMultRS[i].setvJ((int) register.getValue());
+                            intMultRS[i].setVJ(register.getMemoryBlock());
                             intMultRS[i].setReady(true);
                         } else {
                             intMultRS[i].setQJ(register.getQi());
@@ -281,7 +295,7 @@ public class IntegerReservationStationBuffer {
                         register = registerFile.getRegister(operands[2]);
 
                         if (register.getQi().equals("0")) {
-                            intMultRS[i].setvK((int) register.getValue());
+                            intMultRS[i].setVK(register.getMemoryBlock());
                             intMultRS[i].setReady(true);
                         } else {
                             intMultRS[i].setQK(register.getQi());

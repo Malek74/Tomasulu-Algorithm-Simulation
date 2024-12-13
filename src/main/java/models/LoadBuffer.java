@@ -72,11 +72,11 @@ public class LoadBuffer {
         LoadBufferEntry loadBufferEntry = buffer.get(index);
 
         // get the value of the tag
-        float value = loadBufferEntry.writeBackEntry();
+        MemoryBlock value = loadBufferEntry.writeBackEntry();
 
         // update all reservation stations that depend on this tag
         mainController.floatReservationStationBuffer.updateReservationStationBuffer(tag, value);
-        mainController.integerReservationStationBuffer.updateReservationStation(tag, (int) value);
+        mainController.integerReservationStationBuffer.updateReservationStation(tag,  value);
 
         // update all branches that depend on tag
         for (String branch : mainController.branchInstructionsBuffer.keySet()) {
