@@ -234,11 +234,11 @@ public class FloatReservationStationBuffer {
 
             floatMultRS[index].clearReservationStation();
         } else if (tagName.contains("AF")) {
-            String op= String.valueOf(floatMultRS[index].getOperation());
+            String op= String.valueOf(floatAddRS[index].getOperation());
             if(op.equals("ADD")){
-                value = (float) (floatMultRS[index].getVJ() + floatMultRS[index].getVK());}
+                value = (float) (floatAddRS[index].getVJ() + floatAddRS[index].getVK());}
             if(op.equals("SUB")){
-                value=(float) (floatMultRS[index].getVJ() - floatMultRS[index].getVK());
+                value=(float) (floatAddRS[index].getVJ() - floatAddRS[index].getVK());
             }
             floatAddRS[index].clearReservationStation();
         }

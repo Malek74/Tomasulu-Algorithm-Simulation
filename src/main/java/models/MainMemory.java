@@ -52,8 +52,11 @@ public class MainMemory {
     }
 
     public void store(int index, String data) {
+        int j=0;
         for (int i = 0; i < data.length(); i += 8) {
-            memory[index + i] = data.substring(i, i + 8);
+
+            memory[index + j] = data.substring(i, i + 8);
+            j++;
         }
     }
 

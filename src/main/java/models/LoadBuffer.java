@@ -93,7 +93,6 @@ public class LoadBuffer {
         mainController.registerInt.updateRegister(tag, value, "R");
 
         // write back into cache
-
         String data = mainController.memory.load(loadBufferEntry.getAddress(), mainController.cache.getBlockSize());
 
         mainController.cache.write(loadBufferEntry.getAddress(), data);

@@ -19,6 +19,9 @@ public class BranchInstruction {
         this.operation = operation;
         this.destination = Integer.parseInt(instr.split(" ")[3]);
         this.timeLeft = mainController.latencyMap.get("branch");
+        this.qJ = "";
+        this.qK = "";
+
     }
 
     public boolean updateDueToIssue(Instruction instruction, String operation) {
@@ -36,18 +39,20 @@ public class BranchInstruction {
             source2Register = mainController.registerFloat.getRegister(source2);
         }
 
-        if (source1Register.getQi() == null || source1Register.getQi().equals("")) {
+        if (source1Register.getQi() == null || source1Register.getQi().equals("")
+                || source1Register.getQi().equals("0")) {
             this.source1 = source1Register.getValue();
         } else {
             this.qJ = source1Register.getQi();
         }
 
-        if (source2Register.getQi() == null || source2Register.getQi().equals("")) {
+        if (source2Register.getQi() == null || source2Register.getQi().equals("")
+                || source2Register.getQi().equals("0")) {
             this.source2 = source2Register.getValue();
         } else {
             this.qK = source2Register.getQi();
         }
-        return qJ.equals("") && qK.equals("");
+        return true;
     }
 
     public void updateDueToWriteBack(String tag, float value) {
@@ -68,11 +73,22 @@ public class BranchInstruction {
     public void execute() {
         if (isReady) {
             timeLeft--;
-            if (timeLeft == 0) {
-                mainController.instructionQueue.setIndex(destination);
+            if (timeLeft == -1) {
+                mainController.noIssue = false;
+                if (operation.equals("BEQ")) {
+                    if (source1 == source2) {
+                        mainController.instructionQueue.setIndex(destination);
+                    }
+                }
+
+                if (operation.equals("BNE")) {
+                    if (source1 != source2) {
+                        mainController.instructionQueue.setIndex(destination);
+                    }
+
+                }
             }
         }
-
     }
 
     public String getTag() {

@@ -17,6 +17,7 @@ public class ReservationStation {
         isReady = false;
         qJ = "";
         qK = "";
+        operation= models.operation.NA;
     }
 
     public void setTimeLeft(int timeLeft) {

@@ -9,7 +9,7 @@ public class Cache {
     public Cache(int size, int blockSize) {
         cache = new String[size];
         this.blockSize = blockSize;
-        
+
     }
 
     public String read(int address, int numOfBytes) {
@@ -35,11 +35,14 @@ public class Cache {
     public String get(int index) {
         return cache[index];
     }
+
     public void write(int address, String data) {
         // Write data to cache
-        int j=0;
-        for (int i = 0; i < data.length(); i+=8) {
-            cache[address +j] = data.substring(i,i+8);
+        int j = 0;
+        System.out.println("Writing to cache: " + data);
+        for (int i = 0; i < data.length(); i += 8) {
+
+            cache[address + j] = data.substring(i, i + 8);
             j++;
         }
     }

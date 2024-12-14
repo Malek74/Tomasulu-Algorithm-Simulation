@@ -171,9 +171,16 @@ public class StoreBuffer {
 
         int bytes = getNumOfBytes(entry.getOperation());
         String data = MainMemory.decimalToBinary((int) value, bytes);
+        System.out.println(data);
 
         // Write the value to memory
         mainController.memory.store(entry.getAddress(), data);
+
+        //write value to cache
+        mainController.cache.write(entry.getAddress(), data);
+
+        // Clear the entry
+        clearEntry(index);
 
     }
 

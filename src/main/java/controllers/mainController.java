@@ -27,6 +27,7 @@ public class mainController {
     public static ArrayList<StoreBufferEntry> storeBufferEntryWriteBack;
     public static ArrayList<LoadBufferEntry> loadBufferEntryWriteBack;
     public static Hashtable<String, BranchInstruction> branchInstructionsBuffer;
+    public static boolean noIssue;
 
     public static void main(String[] args) {
 
@@ -82,6 +83,7 @@ public class mainController {
 
     }
 
+
     private static void loadRegisters(String path, RegisterFile registerFile) {
         try {
             List<String> lines = Files.readAllLines(Paths.get(path));
@@ -90,7 +92,7 @@ public class mainController {
                     continue;
                 }
                 String[] parts = line.split("=");
-
+                System.out.println(parts[0] + " " + parts[1]);
                 registerFile.initializeRegister(parts[0], Float.parseFloat(parts[1]));
 
             }
@@ -148,7 +150,9 @@ public class mainController {
         if (op.equals("BEQ") || op.equals("BNE")) {
             BranchInstruction branchInstruction = new BranchInstruction(instruction, op, instructionQueue.getIndex());
             branchInstructionsBuffer.put("B" + instructionQueue.getIndex(), branchInstruction);
+            noIssue = true;
             return branchInstruction.updateDueToIssue(instruction, op);
+
         }
         return false;
     }
@@ -264,12 +268,15 @@ public class mainController {
         // issue instruction
         Instruction instructionToIssue;
         if (instructionQueue.getIndex() < instructionQueue.size()) {
+
             instructionToIssue = instructionQueue.fetchInstruction();
+
             // if instruction can be issued increment the index
-            if (issueInstruction(instructionToIssue, instructionToIssue.extractOperation())) {
+            if(!noIssue){
+            if (  issueInstruction(instructionToIssue, instructionToIssue.extractOperation())) {
                 System.out.println(instructionToIssue.getInstruction() + " issued");
                 instructionQueue.setIndex(instructionQueue.getIndex() + 1);
-            }
+            }}
         }
 
     }

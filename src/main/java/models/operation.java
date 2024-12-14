@@ -8,7 +8,8 @@ public enum operation {
     STORE,
     LOAD,
     DSUBI,
-    DADDI
+    DADDI,
+    NA
 }
 
 
