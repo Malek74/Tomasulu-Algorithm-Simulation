@@ -78,3 +78,10 @@ The GUI provides options to:
 - **Resolve Hazards**: Observe how the system manages hazards and concurrent bus access.
 
 ## Screenshots
+### Main Interface
+![Main Interface](https://github.com/user-attachments/assets/2fb80f24-e276-4291-acc8-9bd3218e7733)
+
+### Cycle-by-Cycle Execution
+![Reservation Station](https://github.com/user-attachments/assets/0c13f406-4603-4675-ac8e-16a2df40f32d)
+
+
