@@ -50,3 +50,31 @@ Ensure the following tools are installed on your system:
    ```bash
    git clone https://github.com/Malek74/Tomasulo-Algorithm-Simulation.git
    cd Tomasulo-Algorithm-Simulation
+   ```
+
+2. **Build the Project**
+   ```bash
+   mvn clean install
+   ```
+### Running the Simulator
+After building the project, launch the simulator:
+```bash
+java -jar target/tomasulo-simulation.jar
+```
+### Input instructions
+- Input instructions directly in assembly format, e.g., DIV R1 R2 R2.
+- Upload a instructions.txt file in resources folder with multiple instructions listed line by line.
+## Usage
+
+The GUI provides options to:
+
+- **Input Parameters**: Configure latency, cache, buffer sizes, and initial register values.
+- **Add Instructions**: Enter instructions manually or via file upload.
+- **Simulate Execution**: View cycle-by-cycle updates for:
+  - Reservation stations
+  - Register file
+  - Cache (with data misses)
+  - Instruction queue
+- **Resolve Hazards**: Observe how the system manages hazards and concurrent bus access.
+
+## Screenshots
